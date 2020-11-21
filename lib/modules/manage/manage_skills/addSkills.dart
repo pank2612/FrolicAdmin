@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frolicsports/constants/textField.dart';
 import 'package:frolicsports/models/skillsModel.dart';
 import 'package:frolicsports/models/tournamentModel.dart';
+import 'package:frolicsports/modules/manage/manage_skills/manageSkills.dart';
 import 'package:frolicsports/services/skillsServices.dart';
 import 'package:frolicsports/services/torunaments.dart';
 
@@ -134,6 +135,7 @@ class _AddSkillsState extends State<AddSkills> {
   postSkillsData() {
     SkillsModel skillsModel = SkillsModel(
         name: _nameController.text,
+        tournamentId: int.parse(_tourName),
         shortName: _ShortCodeController.text,
         max: int.parse(_maxController.text),
         min: int.parse(_minController.text));
@@ -152,65 +154,69 @@ class _AddSkillsState extends State<AddSkills> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Card(
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "ADD SKILLS",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 20,
+    return new WillPopScope(
+      onWillPop: () async => Navigator.push(context,
+          MaterialPageRoute(builder: (context) => new ManageSkillsScreen())),
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(25),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "ADD SKILLS",
+                      style: TextStyle(
+                        color: Colors.lightBlue,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: Colors.grey.shade300,
-                    thickness: 1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      dropDownTournament(
-                          selectedCategory: _tourName,
-                          categories: _tournamentList,
-                          name: "SELECT TOURNAMENT"),
-                      textFieldWithText("Name", _nameController,
-                          ValidationKey.name, TextInputType.text)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Short Code", _ShortCodeController,
-                          ValidationKey.shortCode, TextInputType.text),
-                      textFieldWithText("Max", _maxController,
-                          ValidationKey.maxPlayers, TextInputType.number)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Min", _minController,
-                          ValidationKey.minPlayers, TextInputType.number),
-                    ],
-                  ),
-                  RaisedButton(
-                    color: Colors.lightBlue,
-                    child: Text("Submit"),
-                    onPressed: () {
-                      _submit();
-                    },
-                  )
-                ],
+                    Divider(
+                      color: Colors.grey.shade300,
+                      thickness: 1,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        dropDownTournament(
+                            selectedCategory: _tourName,
+                            categories: _tournamentList,
+                            name: "SELECT TOURNAMENT"),
+                        textFieldWithText("Name", _nameController,
+                            ValidationKey.name, TextInputType.text)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText("Short Code", _ShortCodeController,
+                            ValidationKey.shortCode, TextInputType.text),
+                        textFieldWithText("Max", _maxController,
+                            ValidationKey.maxPlayers, TextInputType.number)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText("Min", _minController,
+                            ValidationKey.minPlayers, TextInputType.number),
+                      ],
+                    ),
+                    RaisedButton(
+                      color: Colors.lightBlue,
+                      child: Text("Submit"),
+                      onPressed: () {
+                        _submit();
+                      },
+                    )
+                  ],
+                ),
               ),
             ),
           ),

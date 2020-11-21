@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frolicsports/constants/validator.dart';
+import 'package:regexpattern/regexpattern.dart';
 
 Widget textField(
     {String labletext,
@@ -34,23 +35,22 @@ Widget textField(
 String validateInput(String inputValue, ValidationKey key) {
   switch (key) {
     case ValidationKey.email:
-      return inputValue.isValidEmail() ? null : "Enter correct email";
+      return inputValue.isEmail() ? null : "Enter correct email";
       break;
     case ValidationKey.password:
-      // ignore: unnecessary_statements
-      return inputValue.isValidPassword()
+      return inputValue.isPasswordHard()
           ? null
-          : "Enter password must be more than 7 letters";
+          : "Must contains at least: 1 uppercase letter, 1 lowecase letter, 1 number, & 1 special character (symbol),Minimum character: 8";
       break;
     case ValidationKey.title:
       return inputValue.isValidTitle()
           ? null
-          : " Title must be more than 3 letters";
+          : " Title must be more than 2 letters";
       break;
     case ValidationKey.Description:
       return inputValue.isValidDescription()
           ? null
-          : "Describe must be more than 5 words";
+          : "Describe must be more than 2 letters";
       break;
     case ValidationKey.name:
       return inputValue.isValidName()
@@ -59,75 +59,90 @@ String validateInput(String inputValue, ValidationKey key) {
       break;
 
     case ValidationKey.maxPoints:
-      return inputValue.isValidMaxPoints() ? null : "Points can't be Zero";
+      return inputValue.isMaxPoints()
+          ? null
+          : "Points must be less than 3 digits";
       break;
     case ValidationKey.minPlayers:
-      return inputValue.isValidMaxPlayers() ? null : "Min Players must be 4";
+      return inputValue.isMinPlayers()
+          ? null
+          : "Min Players must be less than 2 digits";
       break;
     case ValidationKey.maxPlayers:
-      return inputValue.isValidMaxPlayers() ? null : "Max Players must be 7";
+      return inputValue.isMaxPlayers()
+          ? null
+          : "Max Players must be less than 3 digits";
       break;
     case ValidationKey.players:
-      return inputValue.isValidPlayers() ? null : "Players can't be Zero";
+      return inputValue.isMaxPlayers()
+          ? null
+          : "Players must be less than 3 digits";
       break;
     case ValidationKey.number:
-      return inputValue.isValidNumber() ? null : "Number can't be Zero";
+      return inputValue.isValidMobile() ? null : "Number must be 2 digits";
       break;
     case ValidationKey.score:
-      return inputValue.isValidScore() ? null : "Score can't be Zero";
+      return inputValue.isValidMobile() ? null : "Score must be 2 digits";
       break;
     case ValidationKey.deadlineSeconds:
-      return inputValue.isValidDeadline()
+      return inputValue.isValidDeadlines()
           ? null
-          : "Deadlines must be 60 seconds";
+          : "Deadlines must be more than 60 seconds";
       break;
     case ValidationKey.contestCategory:
       return inputValue.isValidContestCategory()
           ? null
-          : "Contest must be 60 seconds";
+          : "Contest can't be empty";
       break;
     case ValidationKey.maxSingleTeam:
-      return inputValue.isValidMaxSingleTeam()
+      return inputValue.isMaxPlayerSingleTeam()
           ? null
-          : "Min players from single team must be 1";
+          : "Max players from single team must be 9";
       break;
     case ValidationKey.venue:
-      return inputValue.isValidPlayers()
-          ? null
-          : "Venue must be more than 5 words";
+      return inputValue.isValidName() ? null : "Venue can't be empty";
       break;
     case ValidationKey.entryAmount:
-      return inputValue.isValidEntryAmount()
-          ? null
-          : "Entry Amount can't be Zero";
+      return inputValue.isEntryAmount() ? null : "Entry Amount can't be Zero";
       break;
     case ValidationKey.status:
-      return inputValue.isValidStatus() ? null : "Status can't be empty";
+      return inputValue.isBinary() ? null : "Status must be 0 or 1";
       break;
     case ValidationKey.maxEntries:
-      return inputValue.isValidMaxEntries()
-          ? null
-          : "Max Entries can't be Zero";
+      return inputValue.isMaxEntries() ? null : "Max Entries can't be Zero";
       break;
+
     case ValidationKey.maxEntryPerUSer:
-      return inputValue.isValidMaxEntryPerUser()
+      return inputValue.isMaxEntryPerUSer()
           ? null
           : "Max Entry Per User can't be Zero";
       break;
     case ValidationKey.credit:
-      return inputValue.isValidCredit()
+      return inputValue.isValidCredits()
           ? null
-          : " Credit must be more than 3 letters";
+          : " Credit must be more than 2 letters";
       break;
     case ValidationKey.shortCode:
-      return inputValue.isValidShortCode()
+      return inputValue.isShortCode()
           ? null
-          : " Short Code must be more than 2 letters";
+          : " Short Code must be uppercase and less than 4 digits";
+      break;
+    case ValidationKey.image:
+      return inputValue.isImage()
+          ? null
+          : " Short Code must be more than 1 letters";
+      break;
+    case ValidationKey.rankRangeStart:
+      return inputValue.isRankRangeStart()
+          ? null
+          : " This field can't be empty";
       break;
   }
 }
 
 enum ValidationKey {
+  rankRangeStart,
+  image,
   email,
   title,
   Description,
@@ -148,26 +163,8 @@ enum ValidationKey {
   maxSingleTeam,
   status,
   time,
-  device,
-  gateNo,
-  entrance,
-  ownerName,
-  towerNumber,
-  familyMember,
-  documentType,
-  adharCard,
-  panCard,
-  gender,
   password,
   username,
   mobileNo,
-  otherMobileNo,
   name,
-  companyName,
-  society,
-  flatNo,
-  controller,
-  option,
-  confirmPassword,
-  validDocumentType
 }

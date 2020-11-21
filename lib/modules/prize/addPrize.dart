@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frolicsports/constants/textField.dart';
 import 'package:frolicsports/models/contestsModel.dart';
 import 'package:frolicsports/models/prizeModel.dart';
+import 'package:frolicsports/modules/prize/prizeScreen.dart';
 import 'package:frolicsports/services/contestsServices.dart';
 import 'package:frolicsports/services/prizeServices.dart';
 
@@ -86,16 +87,15 @@ class _AddPrizeState extends State<AddPrize> {
         Container(
             width: MediaQuery.of(context).size.width * 0.45,
             padding: EdgeInsets.only(top: 8),
-            child: _loading == true
-                ? Center(child: CircularProgressIndicator())
-                : Container(
-                    width: MediaQuery.of(context).size.width * 0.96,
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(width: 1, color: Colors.grey.shade600),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.96,
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.grey.shade600),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: DropdownButtonHideUnderline(
+                child: _loading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : ButtonTheme(
                         alignedDropdown: true,
                         child: DropdownButton<String>(
                           icon: Icon(
@@ -128,8 +128,8 @@ class _AddPrizeState extends State<AddPrize> {
                           value: selectedCategory,
                         ),
                       ),
-                    ),
-                  )),
+              ),
+            )),
       ],
     );
   }
@@ -140,7 +140,7 @@ class _AddPrizeState extends State<AddPrize> {
     PrizeModel prizeModel = PrizeModel(
         rankRangeEnd: int.parse(_rankRangeEndController.text),
         rankRangeStart: int.parse(_rankRangeStartController.text),
-        status: int.parse(_statusController.text),
+        status: isEnabled,
         amount: int.parse(_amountController.text),
         contestId: int.parse(_contestId));
     getPostPrize.postPrize(
@@ -150,76 +150,112 @@ class _AddPrizeState extends State<AddPrize> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Card(
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "ADD PRIZE",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 20,
+    return new WillPopScope(
+      onWillPop: () async => Navigator.push(
+          context, MaterialPageRoute(builder: (context) => new PrizeScreen())),
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(25),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "ADD PRIZE",
+                      style: TextStyle(
+                        color: Colors.lightBlue,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: Colors.grey.shade300,
-                    thickness: 1,
-                  ),
-                  Row(
+                    Divider(
+                      color: Colors.grey.shade300,
+                      thickness: 1,
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          dropDownContest(
+                              categories: _contestList,
+                              selectedCategory: _contestId,
+                              name: "Contest Name"),
+                          textFieldWithText("Entry Amount", _amountController,
+                              ValidationKey.entryAmount, TextInputType.number),
+                        ]),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        dropDownContest(
-                            categories: _contestList,
-                            selectedCategory: _contestId,
-                            name: "Contest Name"),
-                        textFieldWithText("Entry Amount", _amountController,
-                            ValidationKey.entryAmount, TextInputType.number),
-                      ]),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText(
-                          "Rank Range Start",
-                          _rankRangeStartController,
-                          ValidationKey.status,
-                          TextInputType.text),
-                      textFieldWithText(
-                          "Rank Range End",
-                          _rankRangeEndController,
-                          ValidationKey.status,
-                          TextInputType.text)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Status", _statusController,
-                          ValidationKey.status, TextInputType.number),
-                    ],
-                  ),
-                  RaisedButton(
-                    color: Colors.lightBlue,
-                    child: Text("Submit"),
-                    onPressed: () {
-                      _submit();
-                    },
-                  )
-                ],
+                        textFieldWithText(
+                            "Rank Range Start",
+                            _rankRangeStartController,
+                            ValidationKey.rankRangeStart,
+                            TextInputType.text),
+                        textFieldWithText(
+                            "Rank Range End",
+                            _rankRangeEndController,
+                            ValidationKey.rankRangeStart,
+                            TextInputType.text)
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '$textValue',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Switch(
+                          onChanged: toggleSwitch,
+                          value: isSwitched,
+                          activeColor: Colors.blue,
+                          activeTrackColor: Colors.blue,
+                          inactiveThumbColor: Colors.redAccent,
+                          inactiveTrackColor: Colors.redAccent,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.05),
+                        RaisedButton(
+                          onPressed: () {
+                            _submit();
+                          },
+                          color: Colors.lightBlue,
+                          child: Text("Submit"),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  bool isSwitched = false;
+  int isEnabled = 0;
+  var textValue = 'Status';
+  void toggleSwitch(bool value) {
+    if (isSwitched == false) {
+      setState(() {
+        isEnabled = 1;
+        isSwitched = true;
+        textValue = 'Status is ON';
+      });
+      print('Switch Button is ON');
+    } else {
+      setState(() {
+        isEnabled = 0;
+        isSwitched = false;
+        textValue = 'Status is OFF';
+      });
+      print('Switch Button is OFF');
+    }
   }
 
   _submit() {

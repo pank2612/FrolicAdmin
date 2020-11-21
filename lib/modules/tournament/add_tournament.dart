@@ -2,11 +2,13 @@ import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/constants/date_And_time.dart';
 import 'package:frolicsports/constants/textField.dart';
 import 'package:frolicsports/models/sportsModel.dart';
 import 'package:frolicsports/models/tournamentModel.dart';
+import 'package:frolicsports/modules/tournament/tournamentScreen.dart';
 import 'package:frolicsports/services/getSports.dart';
 import 'package:firebase/firebase.dart' as fb;
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -202,44 +204,6 @@ class _AddTournamentState extends State<AddTournament> {
 
   String _selectCountry;
 
-  dropDown({List<String> categories, String selectedCategory, String name}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          name,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 17,
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width * 0.45,
-          padding: EdgeInsets.only(top: 8),
-          child: DropdownButtonFormField(
-            items: categories.map((String category) {
-              return new DropdownMenuItem(
-                  value: category, child: Text(category));
-            }).toList(),
-            onChanged: (newValue) {
-              // do other stuff with _category
-              setState(() => selectedCategory = newValue);
-            },
-            value: selectedCategory,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-              filled: true,
-              fillColor: Colors.grey[200],
-              hintText: selectedCategory,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   dropDownSports(
       {List<SportsModel> categories, String selectedCategory, String name}) {
     return Column(
@@ -256,16 +220,15 @@ class _AddTournamentState extends State<AddTournament> {
         Container(
             width: MediaQuery.of(context).size.width * 0.45,
             padding: EdgeInsets.only(top: 8),
-            child: _loading == true
-                ? Center(child: CircularProgressIndicator())
-                : Container(
-                    width: MediaQuery.of(context).size.width * 0.96,
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(width: 1, color: Colors.grey.shade600),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.96,
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.grey.shade600),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: DropdownButtonHideUnderline(
+                child: _loading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : ButtonTheme(
                         alignedDropdown: true,
                         child: DropdownButton<String>(
                           icon: Icon(
@@ -298,8 +261,8 @@ class _AddTournamentState extends State<AddTournament> {
                           value: selectedCategory,
                         ),
                       ),
-                    ),
-                  )),
+              ),
+            )),
       ],
     );
   }
@@ -322,16 +285,15 @@ class _AddTournamentState extends State<AddTournament> {
         Container(
             width: MediaQuery.of(context).size.width * 0.45,
             padding: EdgeInsets.only(top: 8),
-            child: _loading == true
-                ? Center(child: CircularProgressIndicator())
-                : Container(
-                    width: MediaQuery.of(context).size.width * 0.96,
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(width: 1, color: Colors.grey.shade600),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.96,
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.grey.shade600),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: DropdownButtonHideUnderline(
+                child: _loading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : ButtonTheme(
                         alignedDropdown: true,
                         child: DropdownButton<String>(
                           icon: Icon(
@@ -349,7 +311,8 @@ class _AddTournamentState extends State<AddTournament> {
                             return new DropdownMenuItem(
                                 value: tournament.country.toString(),
                                 child: Text(
-                                  tournament.country,
+                                  //'',
+                                  tournament.country.toString(),
                                   style: TextStyle(color: Colors.black),
                                 ));
                           }).toList(),
@@ -358,14 +321,14 @@ class _AddTournamentState extends State<AddTournament> {
                             setState(() {
                               selectedCategory = newValue;
                               _selectCountry = newValue;
-                              print("selected country $_selectCountry");
+                              print("selected country $selectedCategory");
                             });
                           },
                           value: selectedCategory,
                         ),
                       ),
-                    ),
-                  )),
+              ),
+            )),
       ],
     );
   }
@@ -430,114 +393,119 @@ class _AddTournamentState extends State<AddTournament> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Card(
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(25.0),
-            child: Form(
-              key: _formKey,
-              child: ListView(
+    return new WillPopScope(
+      onWillPop: () async => Navigator.push(context,
+          MaterialPageRoute(builder: (context) => new TournamentScreen())),
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
 //                crossAxisAlignment: CrossAxisAlignment.start,
 //                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "ADD TOUNAMENT",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 20,
-                    ),
-                  ),
-                  Divider(
-                    color: Colors.grey.shade200,
-                    thickness: 1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      dropDownSports(
-                          name: "SELECT SPORTS",
-                          selectedCategory: _category,
-                          categories: _sportsList),
-                      textFieldWithText("TITLE", _titleController,
-                          ValidationKey.title, TextInputType.text)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Description", _descriptionController,
-                          ValidationKey.Description, TextInputType.text),
-                      textFieldWithImage("LOGO")
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithDateTime(
-                          "Start Date", startDateAndTimeField()),
-                      textFieldWithDateTime("End Date", endDateAndTimeField())
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Max Points", _maxPointsController,
-                          ValidationKey.maxPoints, TextInputType.number),
-                      textFieldWithText("Players", _playersController,
-                          ValidationKey.players, TextInputType.number)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText(
-                          "Max Player From Single Team",
-                          _maxSingleTeamController,
-                          ValidationKey.maxSingleTeam,
-                          TextInputType.number),
-                      textFieldWithText(
-                          "DeadLine In Seconds",
-                          _deadlineSecondsController,
-                          ValidationKey.deadlineSeconds,
-                          TextInputType.number)
-                    ],
-                  ),
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      dropDownCountry(
-                          name: "SELECT COUNRTY",
-                          categories: _tournamentList,
-                          selectedCategory: _selectCountry),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.1,
-                      ),
-                      Text(
-                        '$textValue',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      Switch(
-                        onChanged: toggleSwitch,
-                        value: isSwitched,
-                        activeColor: Colors.blue,
-                        activeTrackColor: Colors.blue,
-                        inactiveThumbColor: Colors.redAccent,
-                        inactiveTrackColor: Colors.redAccent,
-                      ),
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.05),
-                      RaisedButton(
-                        onPressed: () {
-                          _submit();
-                        },
+                  children: [
+                    Text(
+                      "ADD TOUNAMENT",
+                      style: TextStyle(
                         color: Colors.lightBlue,
-                        child: Text("Submit"),
-                      )
-                    ],
-                  ),
-                ],
+                        fontSize: 20,
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.grey.shade200,
+                      thickness: 1,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        dropDownSports(
+                            name: "SELECT SPORTS",
+                            selectedCategory: _category,
+                            categories: _sportsList),
+                        textFieldWithText("TITLE", _titleController,
+                            ValidationKey.title, TextInputType.text)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText("Description", _descriptionController,
+                            ValidationKey.Description, TextInputType.text),
+                        textFieldWithImage("LOGO")
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithDateTime(
+                            "Start Date", startDateAndTimeField()),
+                        textFieldWithDateTime("End Date", endDateAndTimeField())
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText("Max Points", _maxPointsController,
+                            ValidationKey.maxPoints, TextInputType.number),
+                        textFieldWithText("Players", _playersController,
+                            ValidationKey.players, TextInputType.number)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText(
+                            "Max Player From Single Team",
+                            _maxSingleTeamController,
+                            ValidationKey.maxSingleTeam,
+                            TextInputType.number),
+                        textFieldWithText(
+                            "DeadLine In Seconds",
+                            _deadlineSecondsController,
+                            ValidationKey.deadlineSeconds,
+                            TextInputType.number)
+                      ],
+                    ),
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        dropDownCountry(
+                            name: "SELECT COUNRTY",
+                            categories: _tournamentList,
+                            selectedCategory: _selectCountry),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.1,
+                        ),
+                        Text(
+                          '$textValue',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Switch(
+                          onChanged: toggleSwitch,
+                          value: isSwitched,
+                          activeColor: Colors.blue,
+                          activeTrackColor: Colors.blue,
+                          inactiveThumbColor: Colors.redAccent,
+                          inactiveTrackColor: Colors.redAccent,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.05),
+                        RaisedButton(
+                          onPressed: () {
+                            _submit();
+                          },
+                          color: Colors.lightBlue,
+                          child: Text("Submit"),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -601,15 +569,34 @@ class _AddTournamentState extends State<AddTournament> {
 //          .refFromURL("gs://frolicsports-39c94.appspot.com")
 //          .child(path)
 //          .put(file);
+
       imageText = file.name.toString();
 
       // print("data is ${imageText.toString()}");
     });
   }
 
+  List tournamentName = [];
   _submit() {
     if (_formKey.currentState.validate()) {
-      postTournamentData();
+      _tournamentList.forEach((element) {
+        tournamentName.add(element.name);
+      });
+      tournamentName.contains(_titleController.text)
+          ? Fluttertoast.showToast(
+              msg: "This title already created",
+              gravity: ToastGravity.CENTER_LEFT,
+              timeInSecForIosWeb: 2)
+          : valid();
     }
+  }
+
+  valid() {
+    postTournamentData();
+    Fluttertoast.showToast(
+      msg: "Added Successfully",
+      gravity: ToastGravity.CENTER_LEFT,
+      timeInSecForIosWeb: 2,
+    );
   }
 }

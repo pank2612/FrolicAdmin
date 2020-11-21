@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/constants/textField.dart';
 import 'package:frolicsports/models/sportsModel.dart';
+import 'package:frolicsports/modules/manage/manage_Sports/manageSports.dart';
 import 'package:frolicsports/services/getSports.dart';
 import 'package:http/http.dart';
 import 'package:firebase/firebase.dart' as fb;
@@ -163,61 +165,80 @@ class _AddSportsState extends State<AddSports> {
     uploadImageToFirebaseStorage();
   }
 
+  getSportsData() {
+    getSports.getSports().then((sport) {
+      sport.forEach((element) {
+        sportName.add(element.name);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getSportsData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(
-            right: MediaQuery.of(context).size.width * 0.02,
-            left: MediaQuery.of(context).size.width * 0.02,
-            top: MediaQuery.of(context).size.height * 0.20,
-            bottom: MediaQuery.of(context).size.height * 0.20),
-        child: Card(
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "ADD SPORTS",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 20,
+    return new WillPopScope(
+      onWillPop: () async => Navigator.push(
+          context, MaterialPageRoute(builder: (context) => new ManageSportsScreen())),
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.only(
+              right: MediaQuery.of(context).size.width * 0.02,
+              left: MediaQuery.of(context).size.width * 0.02,
+              top: MediaQuery.of(context).size.height * 0.20,
+              bottom: MediaQuery.of(context).size.height * 0.20),
+          child: Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(25),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "ADD SPORTS",
+                      style: TextStyle(
+                        color: Colors.lightBlue,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: Colors.grey.shade300,
-                    thickness: 1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Name", _nameController,
-                          ValidationKey.name, TextInputType.text),
-                      textFieldWithText("Short Code", _shortCodeController,
-                          ValidationKey.shortCode, TextInputType.text),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithImage("LOGO"),
+                    Divider(
+                      color: Colors.grey.shade300,
+                      thickness: 1,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText("Name", _nameController,
+                            ValidationKey.name, TextInputType.text),
+                        textFieldWithText("Short Code", _shortCodeController,
+                            ValidationKey.shortCode, TextInputType.text),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithImage("LOGO"),
 //                      textFieldWithText("Short Code", _shortCodeController,
 //                          ValidationKey.shortCode, TextInputType.text),
-                    ],
-                  ),
-                  RaisedButton(
-                    color: Colors.lightBlue,
-                    child: Text("Submit"),
-                    onPressed: () {
-                      _submit();
-                    },
-                  )
-                ],
+                      ],
+                    ),
+                    RaisedButton(
+                      color: Colors.lightBlue,
+                      child: Text("Submit"),
+                      onPressed: () {
+                        _submit();
+                      },
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -226,12 +247,24 @@ class _AddSportsState extends State<AddSports> {
     );
   }
 
+  List sportName = [];
   _submit() {
-    //  uploadImageToStorage();
-    // uploadImage();
-
     if (_formKey.currentState.validate()) {
-      postSportsData();
+      sportName.contains(_nameController.text)
+          ? Fluttertoast.showToast(
+              msg: "This title already created",
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2)
+          : valid();
     }
+  }
+
+  valid() {
+    postSportsData();
+    Fluttertoast.showToast(
+      msg: "Added Successfully",
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 2,
+    );
   }
 }

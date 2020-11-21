@@ -1,10 +1,12 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/constants/textField.dart';
 import 'package:frolicsports/models/teamsModel.dart';
 import 'package:frolicsports/models/tournamentModel.dart';
+import 'package:frolicsports/modules/manage/manage_team/manageTeam.dart';
 import 'package:frolicsports/services/teamsServices.dart';
 import 'package:frolicsports/services/torunaments.dart';
 import 'package:firebase/firebase.dart' as fb;
@@ -228,14 +230,22 @@ class _AddTeamsState extends State<AddTeams> {
   bool _loading;
   String _tourName;
   GetPostTeams getPostTeams = GetPostTeams();
-  postTeamsData() {
+  postTeamsData() async {
     TeamsModel teamsModel = TeamsModel(
         name: _nameController.text,
         shortName: _shortCodeController.text,
         logo: imageText,
         tournamentId: int.parse(_tourName));
-    getPostTeams.postTeams(
+    await getPostTeams.postTeams(
         teamsModelObject: teamsModel, function: uploadImageToFirebaseStorage());
+  }
+
+  getTeamsData() async {
+    await getPostTeams.getTeams().then((team) {
+      team.teamsModel.forEach((element) {
+        teamName.add(element.name);
+      });
+    });
   }
 
   @override
@@ -244,63 +254,67 @@ class _AddTeamsState extends State<AddTeams> {
     super.initState();
     _loading = true;
     getTournamentData();
+    getTeamsData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Card(
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "ADD TEAM",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 20,
+    return new WillPopScope(
+      onWillPop: () async => Navigator.push(context,
+          MaterialPageRoute(builder: (context) => new ManageTeamScreen())),
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(25),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "ADD TEAM",
+                      style: TextStyle(
+                        color: Colors.lightBlue,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: Colors.grey.shade300,
-                    thickness: 1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      dropDownTournament(
-                          name: "SELECT TOURNAMENT",
-                          categories: _tournamentList,
-                          selectedCategory: _tourName),
-                      textFieldWithText("Name", _nameController,
-                          ValidationKey.name, TextInputType.text)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Short Code", _shortCodeController,
-                          ValidationKey.shortCode, TextInputType.text),
-                      textFieldWithImage(
-                        "LOGO",
-                      )
-                    ],
-                  ),
-                  RaisedButton(
-                    color: Colors.lightBlue,
-                    child: Text("Submit"),
-                    onPressed: () {
-                      _submit();
-                    },
-                  )
-                ],
+                    Divider(
+                      color: Colors.grey.shade300,
+                      thickness: 1,
+                    ),
+                    Row(
+                      children: [
+                        dropDownTournament(
+                            name: "SELECT TOURNAMENT",
+                            categories: _tournamentList,
+                            selectedCategory: _tourName),
+                        textFieldWithText("Name", _nameController,
+                            ValidationKey.Description, TextInputType.text)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText("Short Code", _shortCodeController,
+                            ValidationKey.shortCode, TextInputType.text),
+                        textFieldWithImage(
+                          "LOGO",
+                        )
+                      ],
+                    ),
+                    RaisedButton(
+                      color: Colors.lightBlue,
+                      child: Text("Submit"),
+                      onPressed: () {
+                        _submit();
+                      },
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -309,9 +323,24 @@ class _AddTeamsState extends State<AddTeams> {
     );
   }
 
+  List teamName = [];
   _submit() {
     if (_formKey.currentState.validate()) {
-      postTeamsData();
+      teamName.contains(_nameController.text)
+          ? Fluttertoast.showToast(
+              msg: "This title already created",
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2)
+          : valid();
     }
+  }
+
+  valid() {
+    postTeamsData();
+    Fluttertoast.showToast(
+      msg: "Added Successfully",
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 2,
+    );
   }
 }

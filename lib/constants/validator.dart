@@ -55,32 +55,89 @@ extension EmailValidator on String {
         r'^[^@]+@[^@]+\.[^@]+').hasMatch(this);
   }
 
-  bool isValidPassword() {
-    return this.length > 4 ? true : false;
+  bool isValidCredits() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
+        ? true
+        : false;
   }
 
   bool isValidName() {
-    return this.length > 1 ? true : false;
-  }
-
-  bool isValidMobile() {
-    return RegExp(r'(^(?:[+0]9)?[0-9]{10}$)').hasMatch(this);
+    return RegExp(r'^[a-zA-Z ]+$').hasMatch(this) &&
+            this.length > 2 &&
+            this.length < 30
+        ? true
+        : false;
   }
 
   bool isValidTitle() {
-    return this.length > 0 ? true : false;
+    return this.length > 2 && this.length < 30 ? true : false;
   }
+
+  bool isShortCode() {
+    return RegExp(r'^[A-Z]+$').hasMatch(this) &&
+            //this.length > 2 &&
+            this.length < 4
+        ? true
+        : false;
+  }
+
+  bool isValidDeadlines() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) &&
+            this.length > 1 &&
+            this.length < 8
+        ? true
+        : false;
+  }
+
+  bool isMaxPoints() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
+        ? true
+        : false;
+  }
+
+  bool isMinPlayers() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]{1}$)').hasMatch(this)
+        //&& this.length < 2
+        ? true
+        : false;
+  }
+
+  bool isMaxPlayers() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
+        ? true
+        : false;
+  }
+
+  bool isValidMobile() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]{2}$)').hasMatch(this);
+  }
+
+  bool isMaxPlayerSingleTeam() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]{1}$)').hasMatch(this);
+  }
+
+//  bool isValidTitle() {
+//    return this.length > 0 ? true : false;
+//  }
 
   bool isValidDescription() {
-    return this.length > 15 ? true : false;
+    return RegExp(r'^[a-zA-Z ]+$').hasMatch(this) &&
+            this.length > 2 &&
+            this.length < 250
+        ? true
+        : false;
   }
 
-  bool isValidDeadline() {
-    return this.length > 1 ? true : false;
-  }
+//  bool isValidDeadline() {
+//    return this.length > 1 ? true : false;
+//  }
 
   bool isValidContestCategory() {
-    return this.length > 1 ? true : false;
+    return RegExp(r'^[a-zA-Z ]+$').hasMatch(this) &&
+            this.length > 2 &&
+            this.length < 30
+        ? true
+        : false;
   }
 
   bool isValidMaxSingleTeam() {
@@ -108,7 +165,33 @@ extension EmailValidator on String {
   }
 
   bool isValidNumber() {
-    return this.length > 0 ? true : false;
+    return RegExp(r'(^[0-9]+$)').hasMatch(this) && this.length < 7
+        ? true
+        : false;
+  }
+
+  bool isEntryAmount() {
+    return RegExp(r'(^[0-9]+$)').hasMatch(this) && this.length < 7
+        ? true
+        : false;
+  }
+
+  bool isMaxEntries() {
+    return RegExp(r'(^[0-9]+$)').hasMatch(this) && this.length < 6
+        ? true
+        : false;
+  }
+
+  bool isMaxEntryPerUSer() {
+    return RegExp(r'(^[0-9]+$)').hasMatch(this) && this.length < 4
+        ? true
+        : false;
+  }
+
+  bool isRankRangeStart() {
+    return RegExp(r'(^[0-9]+$)').hasMatch(this) && this.length < 6
+        ? true
+        : false;
   }
 
   bool isValidDevice() {
@@ -139,17 +222,13 @@ extension EmailValidator on String {
     return this.length > 0 ? true : false;
   }
 
-  bool isValidCredit() {
-    return this.length > 1 ? true : false;
-  }
-
   bool isValidShortCode() {
     return this.length > 2 ? true : false;
   }
 
-  bool isValidFamilyNo() {
-    return RegExp(r'(^[0-9]*$)').hasMatch(this);
-  }
+//  bool isValidFamilyNo() {
+//    return RegExp(r'(^[0-9]*$)').hasMatch(this);
+//  }
 
   bool isValidOwnerName() {
     return this.length > 2 ? true : false;

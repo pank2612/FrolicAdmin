@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/textField.dart';
 import 'package:frolicsports/models/rulesModel.dart';
 import 'package:frolicsports/models/tournamentModel.dart';
+import 'package:frolicsports/modules/manage/manage_rules/manageRules.dart';
 import 'package:frolicsports/services/rulesServices.dart';
 import 'package:frolicsports/services/torunaments.dart';
 
@@ -142,68 +144,81 @@ class _AddRulesState extends State<AddRules> {
     );
   }
 
+  getRuleData() async {
+    await getPostRules.getRule().then((rule) {
+      rule.rulesModel.forEach((element) {
+        ruleName.add(element.name);
+      });
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loading = true;
     getTournamentData();
+    getRuleData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Card(
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "ADD RULES",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 20,
+    return new WillPopScope(
+      onWillPop: () async => Navigator.push(
+          context, MaterialPageRoute(builder: (context) => new ManageRulesScreen())),
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(25),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "ADD RULES",
+                      style: TextStyle(
+                        color: Colors.lightBlue,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: Colors.grey.shade300,
-                    thickness: 1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      dropDownTournament(
-                          name: "SELECT TOURNAMENT",
-                          selectedCategory: _tourName,
-                          categories: _tournamentList),
-                      textFieldWithText("Name", _nameController,
-                          ValidationKey.name, TextInputType.text)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Short Code", _shortCodeController,
-                          ValidationKey.shortCode, TextInputType.text),
-                      textFieldWithText("Points", _pointsController,
-                          ValidationKey.maxPoints, TextInputType.number)
-                    ],
-                  ),
-                  RaisedButton(
-                    color: Colors.lightBlue,
-                    child: Text("Submit"),
-                    onPressed: () {
-                      _submit();
-                    },
-                  )
-                ],
+                    Divider(
+                      color: Colors.grey.shade300,
+                      thickness: 1,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        dropDownTournament(
+                            name: "SELECT TOURNAMENT",
+                            selectedCategory: _tourName,
+                            categories: _tournamentList),
+                        textFieldWithText("Name", _nameController,
+                            ValidationKey.name, TextInputType.text)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText("Short Code", _shortCodeController,
+                            ValidationKey.shortCode, TextInputType.text),
+                        textFieldWithText("Points", _pointsController,
+                            ValidationKey.maxPoints, TextInputType.number)
+                      ],
+                    ),
+                    RaisedButton(
+                      color: Colors.lightBlue,
+                      child: Text("Submit"),
+                      onPressed: () {
+                        _submit();
+                      },
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -212,9 +227,24 @@ class _AddRulesState extends State<AddRules> {
     );
   }
 
+  List ruleName = [];
   _submit() {
     if (_formKey.currentState.validate()) {
-      postRulesData();
+      ruleName.contains(_nameController.text)
+          ? Fluttertoast.showToast(
+              msg: "This title already created",
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2)
+          : valid();
     }
+  }
+
+  valid() {
+    postRulesData();
+    Fluttertoast.showToast(
+      msg: "Added Successfully",
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 2,
+    );
   }
 }

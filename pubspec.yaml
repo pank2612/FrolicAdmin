@@ -32,7 +32,9 @@ dependencies:
   firebase:
   datetime_picker_formfield: ^1.0.0
   intl:
-
+  fluttertoast:
+  excel: ^1.1.5
+  syncfusion_flutter_xlsio: ^18.3.50-beta
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

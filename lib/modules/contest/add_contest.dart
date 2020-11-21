@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/textField.dart';
 import 'package:frolicsports/models/contestsModel.dart';
 import 'package:frolicsports/models/matchesModel.dart';
+import 'package:frolicsports/modules/contest/contestScreen.dart';
 import 'package:frolicsports/services/contestsServices.dart';
 import 'package:frolicsports/services/matchesServices.dart';
 
@@ -50,7 +52,6 @@ class _AddContestState extends State<AddContest> {
     );
   }
 
-
   dropDownMatch(
       {List<MatchesModel> categories, String selectedCategory, String name}) {
     return Column(
@@ -67,16 +68,15 @@ class _AddContestState extends State<AddContest> {
         Container(
             width: MediaQuery.of(context).size.width * 0.45,
             padding: EdgeInsets.only(top: 8),
-            child: _loading == true
-                ? Center(child: CircularProgressIndicator())
-                : Container(
-                    width: MediaQuery.of(context).size.width * 0.96,
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(width: 1, color: Colors.grey.shade600),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.96,
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.grey.shade600),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: DropdownButtonHideUnderline(
+                child: _loading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : ButtonTheme(
                         alignedDropdown: true,
                         child: DropdownButton<String>(
                           icon: Icon(
@@ -109,8 +109,8 @@ class _AddContestState extends State<AddContest> {
                           value: selectedCategory,
                         ),
                       ),
-                    ),
-                  )),
+              ),
+            )),
       ],
     );
   }
@@ -126,7 +126,7 @@ class _AddContestState extends State<AddContest> {
         maxEntries: int.parse(_maxEntriesController.text),
         maxEntriesPerUser: int.parse(_maxEntryPerUserController.text),
         matchId: int.parse(_matchId),
-        status: int.parse(_statusController.text));
+        status: isEnabled);
     getPostContest.postContests(
       contestModelObject: contestsModel,
     );
@@ -139,6 +139,21 @@ class _AddContestState extends State<AddContest> {
     super.initState();
     _loading = true;
     getMatchesData();
+    getContestData();
+  }
+
+  List<ContestsModel> _contestList;
+  List<String> contestName = [];
+  getContestData() async {
+    await getPostContest.getContests().then((contest) {
+      contest.contestsModel.forEach((contest) {
+        contestName.add(contest.name);
+      });
+
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 
   List<MatchesModel> _matchList;
@@ -154,81 +169,99 @@ class _AddContestState extends State<AddContest> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Card(
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(25),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "ADD CONTEST",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontSize: 20,
-                    ),
-                  ),
-                  Divider(
-                    color: Colors.grey.shade300,
-                    thickness: 1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      //dropDown(),
-                      dropDownMatch(
-                          name: "Select Match",
-                          selectedCategory: _matchId,
-                          categories: _matchList),
-                      textFieldWithText("TITLE", _titleController,
-                          ValidationKey.title, TextInputType.text)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Entry Amount", _entryAmountController,
-                          ValidationKey.entryAmount, TextInputType.number),
-                      textFieldWithText("Max Entries", _maxEntriesController,
-                          ValidationKey.maxEntries, TextInputType.number)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText(
-                          "Max Entry Per User",
-                          _maxEntryPerUserController,
-                          ValidationKey.maxEntryPerUSer,
-                          TextInputType.number),
-                      textFieldWithText(
-                          "Contest Category",
-                          _contestCategoryController,
-                          ValidationKey.score,
-                          TextInputType.text)
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      textFieldWithText("Status", _statusController,
-                          ValidationKey.maxEntryPerUSer, TextInputType.number),
-                      RaisedButton(
+    return new WillPopScope(
+      onWillPop: () async => Navigator.push(context,
+          MaterialPageRoute(builder: (context) => new ContestScreen())),
+      child: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: Card(
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(25),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "ADD CONTEST",
+                      style: TextStyle(
                         color: Colors.lightBlue,
-                        child: Text("Submit"),
-                        onPressed: () {
-                          _submit();
-                        },
-                      )
-                    ],
-                  ),
-                ],
+                        fontSize: 20,
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.grey.shade300,
+                      thickness: 1,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        //dropDown(),
+                        dropDownMatch(
+                            name: "Select Match",
+                            selectedCategory: _matchId,
+                            categories: _matchList),
+                        textFieldWithText("TITLE", _titleController,
+                            ValidationKey.title, TextInputType.text)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText(
+                            "Entry Amount",
+                            _entryAmountController,
+                            ValidationKey.entryAmount,
+                            TextInputType.number),
+                        textFieldWithText("Max Entries", _maxEntriesController,
+                            ValidationKey.maxEntries, TextInputType.number)
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText(
+                            "Max Entry Per User",
+                            _maxEntryPerUserController,
+                            ValidationKey.maxEntryPerUSer,
+                            TextInputType.number),
+                        textFieldWithText(
+                            "Contest Category",
+                            _contestCategoryController,
+                            ValidationKey.name,
+                            TextInputType.text)
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '$textValue',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Switch(
+                          onChanged: toggleSwitch,
+                          value: isSwitched,
+                          activeColor: Colors.blue,
+                          activeTrackColor: Colors.blue,
+                          inactiveThumbColor: Colors.redAccent,
+                          inactiveTrackColor: Colors.redAccent,
+                        ),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.05),
+                        RaisedButton(
+                          onPressed: () {
+                            _submit();
+                          },
+                          color: Colors.lightBlue,
+                          child: Text("Submit"),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -237,9 +270,43 @@ class _AddContestState extends State<AddContest> {
     );
   }
 
+  bool isSwitched = false;
+  int isEnabled = 0;
+  var textValue = 'Status';
+  void toggleSwitch(bool value) {
+    if (isSwitched == false) {
+      setState(() {
+        isEnabled = 1;
+        isSwitched = true;
+        textValue = 'Status is ON';
+      });
+      print('Switch Button is ON');
+    } else {
+      setState(() {
+        isEnabled = 0;
+        isSwitched = false;
+        textValue = 'Status is OFF';
+      });
+      print('Switch Button is OFF');
+    }
+  }
+
   _submit() {
     if (_formKey.currentState.validate()) {
-      postContestsData();
+      contestName.contains(_titleController.text)
+          ? Fluttertoast.showToast(
+              msg: "This title already created",
+              gravity: ToastGravity.TOP_LEFT,
+              timeInSecForIosWeb: 2)
+          : valid();
     }
+  }
+
+  valid() {
+    postContestsData();
+    Fluttertoast.showToast(
+      msg: "Added Successfully",
+      gravity: ToastGravity.CENTER,
+    );
   }
 }
