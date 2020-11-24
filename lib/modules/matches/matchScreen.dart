@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frolicsports/models/matchesModel.dart';
+import 'package:frolicsports/models/teamsModel.dart';
 import 'package:frolicsports/models/tournamentModel.dart';
 import 'package:frolicsports/modules/matches/add_matches.dart';
 import 'package:frolicsports/screens/homeScreen.dart';
 import 'package:frolicsports/services/matchesServices.dart';
+import 'package:frolicsports/services/teamsServices.dart';
 import 'package:frolicsports/services/torunaments.dart';
 
 class MatchScreen extends StatefulWidget {
@@ -20,6 +22,7 @@ class _MatchScreenState extends State<MatchScreen> {
     _loading = true;
     getMatchesData();
     getTournamentData();
+    getTeamData();
   }
 
   MatchesModelList matchesModelList = MatchesModelList();
@@ -29,6 +32,12 @@ class _MatchScreenState extends State<MatchScreen> {
     setState(() {
       _loading = false;
     });
+  }
+
+  TeamsModelList teamsModelList = TeamsModelList();
+  GetPostTeams getPostTeams = GetPostTeams();
+  getTeamData() async {
+    teamsModelList = await getPostTeams.getTeams();
   }
 
   TournamentModelList tournamentModelList = TournamentModelList();
@@ -52,6 +61,19 @@ class _MatchScreenState extends State<MatchScreen> {
       }
     });
     return tourName;
+  }
+
+  String getTeamName(int Id) {
+    String teamName = "";
+    teamsModelList.teamsModel.forEach((team) {
+      if (team.id == Id) {
+        teamName = team.name;
+//        setState(() {
+//          _loadingName = false;
+//        });
+      }
+    });
+    return teamName;
   }
 
   @override
@@ -215,12 +237,13 @@ class _MatchScreenState extends State<MatchScreen> {
                                                       .toString()),
                                                   normalText(matchesModel.score
                                                       .toString()),
-                                                  normalText(matchesModel
-                                                      .team1Id
-                                                      .toString()),
-                                                  normalText(matchesModel
-                                                      .team2Id
-                                                      .toString()),
+                                                  normalText(getTeamName(
+                                                      matchesModel.team1Id)),
+                                                  normalText(getTeamName(
+                                                      matchesModel.team2Id)),
+//                                                  normalText(matchesModel
+//                                                      .team2Id
+//                                                      .toString()),
                                                   Container(
                                                       width:
                                                           MediaQuery.of(context)

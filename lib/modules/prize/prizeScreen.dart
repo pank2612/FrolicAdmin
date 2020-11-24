@@ -337,9 +337,6 @@ class _PrizeScreenState extends State<PrizeScreen> {
     ContestsModel contestsModel = ContestsModel();
     _contestList.forEach((element) {
       if (int.parse(_contestId) == element.id) {
-//        maxEntries = element.maxEntries;
-//        maxEntriesPerUser = element.maxEntriesPerUser;
-//        contestEntryAmount = element.entryAmount;
         contestsModel = element;
       }
     });
@@ -357,8 +354,9 @@ class _PrizeScreenState extends State<PrizeScreen> {
     return listPrize;
   }
 
-  dropDownContest(
+  Widget dropDownContest(
       {List<ContestsModel> categories, String selectedCategory, String name}) {
+    print("selected $selectedCategory");
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -411,7 +409,7 @@ class _PrizeScreenState extends State<PrizeScreen> {
                               print("selected value $_contestId");
                             });
                           },
-                          value: selectedCategory,
+                          value: _contestId,
                         ),
                       ),
               ),
