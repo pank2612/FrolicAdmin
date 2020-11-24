@@ -3,9 +3,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/textField.dart';
 import 'package:frolicsports/models/contestsModel.dart';
 import 'package:frolicsports/models/matchesModel.dart';
+import 'package:frolicsports/models/teamsModel.dart';
 import 'package:frolicsports/modules/contest/contestScreen.dart';
 import 'package:frolicsports/services/contestsServices.dart';
 import 'package:frolicsports/services/matchesServices.dart';
+import 'package:frolicsports/services/teamsServices.dart';
 
 class AddContest extends StatefulWidget {
   @override
@@ -14,6 +16,7 @@ class AddContest extends StatefulWidget {
 
 class _AddContestState extends State<AddContest> {
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _entryAmountController = TextEditingController();
   TextEditingController _maxEntriesController = TextEditingController();
@@ -94,7 +97,7 @@ class _AddContestState extends State<AddContest> {
                             return new DropdownMenuItem(
                                 value: match.id.toString(),
                                 child: Text(
-                                  match.venue,
+                                  getName(match.id),
                                   style: TextStyle(color: Colors.black),
                                 ));
                           }).toList(),
@@ -116,6 +119,42 @@ class _AddContestState extends State<AddContest> {
   }
 
   String _matchId;
+  TeamsModelList teamsModelList = TeamsModelList();
+  GetPostTeams getPostTeams = GetPostTeams();
+  getTeamsData() async {
+    teamsModelList = await getPostTeams.getTeams();
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  String getName(int Id) {
+    String matchName = "";
+    String team1Name = '';
+    String team2Name = '';
+    _matchList.forEach((match) {
+      print("ID1 is  ${match.id}");
+      print("ID2 is  $Id");
+      if (match.id == Id) {
+        print("I3 is  ${match.id}");
+        print("ID4 is  $Id");
+        //matchName = match.name;
+        teamsModelList.teamsModel.forEach((team) {
+          print("team1Name $team1Name");
+          if (team.id == match.team1Id) {
+            team1Name = team.shortName;
+          }
+          if (team.id == match.team2Id) {
+            team2Name = team.shortName;
+          }
+          print("team2Name $team2Name");
+        });
+        matchName = team1Name + " v/s " + team2Name;
+        print("matchName $matchName");
+      }
+    });
+    return matchName;
+  }
 
   GetPostContest getPostContest = GetPostContest();
   postContestsData() {
@@ -140,6 +179,7 @@ class _AddContestState extends State<AddContest> {
     _loading = true;
     getMatchesData();
     getContestData();
+    getTeamsData();
   }
 
   List<ContestsModel> _contestList;
@@ -173,6 +213,7 @@ class _AddContestState extends State<AddContest> {
       onWillPop: () async => Navigator.push(context,
           MaterialPageRoute(builder: (context) => new ContestScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Card(
@@ -291,22 +332,30 @@ class _AddContestState extends State<AddContest> {
     }
   }
 
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
+  }
+
   _submit() {
     if (_formKey.currentState.validate()) {
-      contestName.contains(_titleController.text)
-          ? Fluttertoast.showToast(
-              msg: "This title already created",
-              gravity: ToastGravity.TOP_LEFT,
-              timeInSecForIosWeb: 2)
-          : valid();
+      if (_maxEntryPerUserController.hashCode *
+              _maxEntriesController.hashCode ==
+          _entryAmountController.hashCode) {
+        contestName.contains(_titleController.text)
+            ? showDialog("This title already created")
+            : valid();
+      } else {
+        showDialog("EntryAmount can't be less than multiple"
+            " of max entry per user and total entry");
+        print("asdfghjk");
+      }
     }
   }
 
   valid() {
     postContestsData();
-    Fluttertoast.showToast(
-      msg: "Added Successfully",
-      gravity: ToastGravity.CENTER,
-    );
+    showDialog("Added Successfully");
   }
 }

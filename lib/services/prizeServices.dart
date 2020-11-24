@@ -18,7 +18,6 @@ class GetPostPrize {
         print("JsonData is $jsonData}");
         final PrizeModelList prizeModelList =
             PrizeModelList.fromJson({"prizeModel": jsonData});
-        //print("Data is${tounamentModel.tournamentModel[1].name}");
         return prizeModelList;
       }
       throw "Something went wrong ${response.statusCode}";
@@ -29,17 +28,17 @@ class GetPostPrize {
 
   postPrize({PrizeModel prizeModelObject}) async {
     var encodedData = jsonEncode(prizeModelObject.toJson());
-    print("encoded Data $encodedData");
+    // print("encoded Data $encodedData");
     try {
       var response = await http.post("${HTTP_URL}prizes",
           headers: {HttpHeaders.contentTypeHeader: "application/json"},
           body: encodedData);
-      print(response.statusCode);
+      // print(response.statusCode);
       if (response.statusCode == 200) {
         // function();
         print("Data Added");
         var jsonData = jsonDecode(response.body);
-        print("JsonData is : $jsonData");
+        // print("JsonData is : $jsonData");
       }
       // throw "Something went wrong ${response.statusCode.toString()}";
     } catch (e) {

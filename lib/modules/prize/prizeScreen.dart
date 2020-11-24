@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/models/contestsModel.dart';
 import 'package:frolicsports/models/prizeModel.dart';
 import 'package:frolicsports/modules/prize/addPrize.dart';
@@ -35,6 +36,7 @@ class _PrizeScreenState extends State<PrizeScreen> {
   GetPostContest getContest = GetPostContest();
   getContestsData() async {
     contestsModelList = await getContest.getContests();
+    getContestList();
     setState(() {
       _loading = false;
     });
@@ -85,7 +87,7 @@ class _PrizeScreenState extends State<PrizeScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    "CONTEST",
+                                    "PRIZE",
                                     style: TextStyle(
                                         fontSize: 20, color: Colors.lightBlue),
                                   ),
@@ -298,14 +300,10 @@ class _PrizeScreenState extends State<PrizeScreen> {
     return Container(
       width: MediaQuery.of(context).size.width * 0.20,
       child: MaterialButton(
-        // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddPrize()));
+          _showDialogBox();
         },
         height: 50,
-        // elevation: 10,
-        // padding: EdgeInsets.symmetric(vertical: 10),
         color: Colors.lightBlue.shade300,
         child: Row(
           children: [
@@ -314,7 +312,7 @@ class _PrizeScreenState extends State<PrizeScreen> {
               color: Colors.white,
             ),
             Text(
-              "Add PRIZE",
+              "SELECT CONTEST",
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -324,6 +322,166 @@ class _PrizeScreenState extends State<PrizeScreen> {
         ),
       ),
     );
+  }
+
+  List<ContestsModel> _contestList;
+  String _contestId;
+  getContestList() {
+    _contestList = contestsModelList.contestsModel;
+  }
+
+  int maxEntriesPerUser;
+  int maxEntries;
+  int contestEntryAmount;
+  ContestsModel contestData() {
+    ContestsModel contestsModel = ContestsModel();
+    _contestList.forEach((element) {
+      if (int.parse(_contestId) == element.id) {
+//        maxEntries = element.maxEntries;
+//        maxEntriesPerUser = element.maxEntriesPerUser;
+//        contestEntryAmount = element.entryAmount;
+        contestsModel = element;
+      }
+    });
+    return contestsModel;
+  }
+
+  List<PrizeModel> prizeList() {
+    List<PrizeModel> listPrize = List<PrizeModel>();
+    prizeModelList.prizeModel.forEach((element) {
+      if (int.parse(_contestId) == element.contestId) {
+        print("contest ${element.amount}");
+        listPrize.add(element);
+      }
+    });
+    return listPrize;
+  }
+
+  dropDownContest(
+      {List<ContestsModel> categories, String selectedCategory, String name}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          name,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 17,
+          ),
+        ),
+        Container(
+            width: MediaQuery.of(context).size.width * 0.30,
+            padding: EdgeInsets.only(top: 8),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.96,
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.grey.shade600),
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: DropdownButtonHideUnderline(
+                child: _loading == true
+                    ? Center(child: CircularProgressIndicator())
+                    : ButtonTheme(
+                        alignedDropdown: true,
+                        child: DropdownButton<String>(
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            size: 40,
+                            color: Colors.black,
+                          ),
+                          //dropdownColor: Colors.white,
+                          elevation: 5,
+                          hint: Text(
+                            'SELECT CONTEST',
+                            style: TextStyle(fontSize: 16, color: Colors.black),
+                          ),
+                          items: _contestList.map((contest) {
+                            return new DropdownMenuItem(
+                                value: contest.id.toString(),
+                                child: Text(
+                                  contest.name,
+                                  style: TextStyle(color: Colors.black),
+                                ));
+                          }).toList(),
+                          onChanged: (newValue) {
+                            // do other stuff with _category
+                            setState(() {
+                              selectedCategory = newValue;
+                              _contestId = newValue;
+                              print("selected value $_contestId");
+                            });
+                          },
+                          value: selectedCategory,
+                        ),
+                      ),
+              ),
+            )),
+      ],
+    );
+  }
+
+  _showDialogBox() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Select Contest"),
+                IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    size: 30,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            ),
+            content: dropDownContest(
+                categories: _contestList,
+                selectedCategory: _contestId,
+                name: "Contest Name"),
+            actions: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.30,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    MaterialButton(
+                      child: Text(
+                        "Add Prize",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      color: Colors.blue,
+                      onPressed: () {
+                        _contestId == null
+                            ? Fluttertoast.showToast(
+                                msg: "Please select Contest name",
+                                gravity: ToastGravity.CENTER,
+                              )
+                            : sendData();
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        });
+  }
+
+  sendData() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddPrize(
+                  contestsModel: contestData(),
+                  prizeModel: prizeList(),
+                )));
   }
 
   Widget normalText(String name) {
