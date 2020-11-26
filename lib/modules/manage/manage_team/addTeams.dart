@@ -12,6 +12,9 @@ import 'package:frolicsports/services/torunaments.dart';
 import 'package:firebase/firebase.dart' as fb;
 
 class AddTeams extends StatefulWidget {
+  String edit;
+  TeamsModel teamsModel;
+  AddTeams({this.edit, this.teamsModel});
   @override
   _AddTeamsState createState() => _AddTeamsState();
 }
@@ -20,13 +23,11 @@ class _AddTeamsState extends State<AddTeams> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _shortCodeController = TextEditingController();
-  TextEditingController _logoController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
-  TextEditingController _maxPointsController = TextEditingController();
-  TextEditingController _playersController = TextEditingController();
+
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintType]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +46,7 @@ class _AddTeamsState extends State<AddTeams> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintType,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -56,7 +57,7 @@ class _AddTeamsState extends State<AddTeams> {
     );
   }
 
-  Widget textFieldWithImage(String name) {
+  Widget textFieldWithImage(String name, String choose) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +99,7 @@ class _AddTeamsState extends State<AddTeams> {
               ),
               Padding(
                 child: imageText == null
-                    ? Text("No file chosen")
+                    ? Text(choose)
                     : Text(imageText.toString()),
                 padding: EdgeInsets.zero,
               )
@@ -292,27 +293,47 @@ class _AddTeamsState extends State<AddTeams> {
                             name: "SELECT TOURNAMENT",
                             categories: _tournamentList,
                             selectedCategory: _tourName),
-                        textFieldWithText("Name", _nameController,
-                            ValidationKey.Description, TextInputType.text)
+                        textFieldWithText(
+                            "Name",
+                            _nameController,
+                            ValidationKey.Description,
+                            TextInputType.text,
+                            widget.edit == "edit" ? widget.teamsModel.name : "")
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Short Code", _shortCodeController,
-                            ValidationKey.shortCode, TextInputType.text),
+                        textFieldWithText(
+                            "Short Code",
+                            _shortCodeController,
+                            ValidationKey.shortCode,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.teamsModel.shortName
+                                : ""),
                         textFieldWithImage(
-                          "LOGO",
-                        )
+                            "LOGO",
+                            widget.edit == "edit"
+                                ? widget.teamsModel.logo
+                                : "No Choose file")
                       ],
                     ),
-                    RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text("Submit"),
-                      onPressed: () {
-                        _submit();
-                      },
-                    )
+                    widget.edit == "edit"
+                        ? RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("EDIT"),
+                            onPressed: () {
+                              _editTeam();
+                            },
+                          )
+                        : RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("Submit"),
+                            onPressed: () {
+                              _submit();
+                            },
+                          )
                   ],
                 ),
               ),
@@ -321,6 +342,25 @@ class _AddTeamsState extends State<AddTeams> {
         ),
       ),
     );
+  }
+
+  _editTeam() {
+    if (_formKey.currentState.validate()) {
+      TeamsModel teamsModel = TeamsModel(
+          name: _nameController.text == null
+              ? widget.teamsModel.name
+              : _nameController.text,
+          shortName: _shortCodeController.text == null
+              ? widget.teamsModel.shortName
+              : _shortCodeController.text,
+          logo: imageText == null ? widget.teamsModel.logo : imageText,
+          tournamentId: int.parse(_tourName) == null
+              ? widget.teamsModel.tournamentId
+              : int.parse(_tourName),
+          id: widget.teamsModel.id);
+      getPostTeams.editTeams(teamsModelObject: teamsModel);
+      uploadImageToFirebaseStorage();
+    }
   }
 
   List teamName = [];

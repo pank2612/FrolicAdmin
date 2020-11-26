@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/playersModel.dart';
 import 'package:frolicsports/models/skillsModel.dart';
@@ -27,8 +28,7 @@ class GetPostSkills {
     }
   }
 
-  postSkills(
-      {SkillsModel skillsModelObject, Function function}) async {
+  postSkills({SkillsModel skillsModelObject, Function function}) async {
     var encodedData = jsonEncode(skillsModelObject.toJson());
     print("encoded Data $encodedData");
     try {
@@ -38,6 +38,30 @@ class GetPostSkills {
       print(response.statusCode);
       if (response.statusCode == 200) {
         //function();
+        Fluttertoast.showToast(
+            msg: "Added Successfully", gravity: ToastGravity.CENTER);
+        print("Data Added");
+        var jsonData = jsonDecode(response.body);
+        print("JsonData is : $jsonData");
+      }
+      // throw "Something went wrong ${response.statusCode.toString()}";
+    } catch (e) {
+      print("Error is ${e.toString()}");
+    }
+  }
+
+  editSkills({SkillsModel skillsModelObject}) async {
+    var encodedData = jsonEncode(skillsModelObject.toJson());
+    print("encoded Data $encodedData");
+    try {
+      var response = await http.put("${HTTP_URL}skills/${skillsModelObject.id}",
+          headers: {HttpHeaders.contentTypeHeader: "application/json"},
+          body: encodedData);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        //function();
+        Fluttertoast.showToast(
+            msg: "Edit Successfully", gravity: ToastGravity.CENTER);
         print("Data Added");
         var jsonData = jsonDecode(response.body);
         print("JsonData is : $jsonData");

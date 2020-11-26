@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/playersModel.dart';
 import 'package:frolicsports/models/rulesModel.dart';
@@ -17,7 +18,7 @@ class GetPostRules {
         var jsonData = jsonDecode(response.body);
         print("JsonData is $jsonData}");
         final RulesModelList rulesModelList =
-        RulesModelList.fromJson({"rulesModel": jsonData});
+            RulesModelList.fromJson({"rulesModel": jsonData});
         //print("Data is${tounamentModel.tournamentModel[1].name}");
         return rulesModelList;
       }
@@ -27,8 +28,7 @@ class GetPostRules {
     }
   }
 
-  postRules(
-      {RulesModel rulesModelObject, Function function}) async {
+  postRules({RulesModel rulesModelObject, Function function}) async {
     var encodedData = jsonEncode(rulesModelObject.toJson());
     print("encoded Data $encodedData");
     try {
@@ -38,6 +38,27 @@ class GetPostRules {
       print(response.statusCode);
       if (response.statusCode == 200) {
         function();
+        print("Data Added");
+        var jsonData = jsonDecode(response.body);
+        print("JsonData is : $jsonData");
+      }
+      // throw "Something went wrong ${response.statusCode.toString()}";
+    } catch (e) {
+      print("Error is ${e.toString()}");
+    }
+  }
+
+  editRules({RulesModel rulesModelObject}) async {
+    var encodedData = jsonEncode(rulesModelObject.toJson());
+    print("encoded Data $encodedData");
+    try {
+      var response = await http.put("${HTTP_URL}rules/${rulesModelObject.id}",
+          headers: {HttpHeaders.contentTypeHeader: "application/json"},
+          body: encodedData);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "Edit Successfully", gravity: ToastGravity.CENTER);
         print("Data Added");
         var jsonData = jsonDecode(response.body);
         print("JsonData is : $jsonData");

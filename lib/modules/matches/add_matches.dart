@@ -12,21 +12,23 @@ import 'package:frolicsports/services/torunaments.dart';
 import 'package:intl/intl.dart';
 
 class AddMatches extends StatefulWidget {
+  String edit;
+  MatchesModel matchesModel;
+  AddMatches({this.edit, this.matchesModel});
   @override
   _AddMatchesState createState() => _AddMatchesState();
 }
 
 class _AddMatchesState extends State<AddMatches> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _venueController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
   TextEditingController _numberController = TextEditingController();
   TextEditingController _scoreController = TextEditingController();
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintText]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +47,7 @@ class _AddMatchesState extends State<AddMatches> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintText,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -363,17 +365,21 @@ class _AddMatchesState extends State<AddMatches> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         textFieldWithText(
-                          "Description",
-                          _descriptionController,
-                          ValidationKey.Description,
-                          TextInputType.text,
-                        ),
+                            "Description",
+                            _descriptionController,
+                            ValidationKey.Description,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.matchesModel.description.toString()
+                                : ""),
                         textFieldWithText(
-                          "Venue",
-                          _venueController,
-                          ValidationKey.venue,
-                          TextInputType.text,
-                        )
+                            "Venue",
+                            _venueController,
+                            ValidationKey.venue,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.matchesModel.venue.toString()
+                                : "")
                       ],
                     ),
                     Row(
@@ -401,26 +407,38 @@ class _AddMatchesState extends State<AddMatches> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         textFieldWithText(
-                          "Number",
-                          _numberController,
-                          ValidationKey.number,
-                          TextInputType.number,
-                        ),
+                            "Number",
+                            _numberController,
+                            ValidationKey.number,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.matchesModel.number.toString()
+                                : ""),
                         textFieldWithText(
-                          "Score",
-                          _scoreController,
-                          ValidationKey.score,
-                          TextInputType.number,
-                        )
+                            "Score",
+                            _scoreController,
+                            ValidationKey.score,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.matchesModel.score.toString()
+                                : "")
                       ],
                     ),
-                    RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text("Submit"),
-                      onPressed: () {
-                        _submit();
-                      },
-                    )
+                    widget.edit == "edit"
+                        ? RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("EDIT"),
+                            onPressed: () {
+                              _editMatch();
+                            },
+                          )
+                        : RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("Submit"),
+                            onPressed: () {
+                              _submit();
+                            },
+                          )
                   ],
                 ),
               ),
@@ -485,6 +503,39 @@ class _AddMatchesState extends State<AddMatches> {
         )
       ],
     );
+  }
+
+  _editMatch() {
+    if (_formKey.currentState.validate()) {
+      MatchesModel matchesModel = MatchesModel(
+          startDate: startDateAndTime,
+//              == null
+//              ? widget.matchesModel.startDate
+//              : startDateAndTime,
+          description: _descriptionController.text == null
+              ? widget.matchesModel.description
+              : _descriptionController.text,
+          score: _scoreController.text == null
+              ? widget.matchesModel.score
+              : _scoreController.text,
+          number: int.parse(_numberController.text) == null
+              ? widget.matchesModel.number
+              : int.parse(_numberController.text),
+          tournamentId: int.parse(_tourName) == null
+              ? widget.matchesModel.tournamentId
+              : int.parse(_tourName),
+          team1Id: int.parse(_team1) == null
+              ? widget.matchesModel.team1Id
+              : int.parse(_team1),
+          team2Id: int.parse(_team2) == null
+              ? widget.matchesModel.team2Id
+              : int.parse(_team2),
+          venue: _venueController.text == null
+              ? widget.matchesModel.venue
+              : _venueController.text,
+          id: widget.matchesModel.id);
+      getPostMatches.editMatches(matchesModelObject: matchesModel);
+    }
   }
 
   List matchName = [];

@@ -230,6 +230,9 @@ class _TournamentScreenState extends State<TournamentScreen> {
                                                                 width: 120,
                                                                 height: 120,
                                                                 child: CircleAvatar(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .transparent,
                                                                     child:
                                                                         CircularProgressIndicator()));
                                                           } else if (!snapShot
@@ -243,7 +246,12 @@ class _TournamentScreenState extends State<TournamentScreen> {
                                                                   CircleAvatar(
                                                                 radius: 30,
                                                                 backgroundColor:
-                                                                    Colors.red,
+                                                                    Colors
+                                                                        .transparent,
+                                                                child: Image.network(
+                                                                    "https://upload.wikimedia.org/wikipedia/commons"
+                                                                    "/thumb/d/d1/Icons8_flat_businessman.svg/768"
+                                                                    "px-Icons8_flat_businessman.svg.png"),
 //                                                              child: Image.network(
 //                                                                  snapShot.data
 //                                                                      .toString()),
@@ -254,10 +262,13 @@ class _TournamentScreenState extends State<TournamentScreen> {
                                                             return Container(
                                                               alignment: Alignment
                                                                   .centerLeft,
-                                                              width: 150,
-                                                              height: 150,
+                                                              width: 20,
+                                                              height: 160,
                                                               child:
                                                                   CircleAvatar(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .transparent,
                                                                 radius: 30,
                                                                 child: Image
                                                                     .network(
@@ -292,26 +303,43 @@ class _TournamentScreenState extends State<TournamentScreen> {
                                                           .country
                                                           .toString() ??
                                                       " "),
-                                                  Container(
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                  USER_TYPE == "admin"
+                                                      ? Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.08,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.close,
-                                                            color: Colors
-                                                                .red.shade700,
-                                                          ),
-                                                          Icon(
-                                                            Icons.mode_edit,
-                                                            color:
-                                                                Colors.orange,
-                                                          )
-                                                        ],
-                                                      )),
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.close,
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade700,
+                                                              ),
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  tourIndex =
+                                                                      index + 1;
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => AddTournament(
+                                                                                edit: "edit",
+                                                                                tournamentModel: editData(),
+                                                                              )));
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .mode_edit,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ))
+                                                      : Text(""),
                                                 ],
                                               ),
                                             ),
@@ -455,8 +483,13 @@ class _TournamentScreenState extends State<TournamentScreen> {
       child: MaterialButton(
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddTournament()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddTournament(
+                        edit: "add",
+                        tournamentModel: editData(),
+                      )));
         },
         height: 50,
         // elevation: 10,
@@ -479,6 +512,18 @@ class _TournamentScreenState extends State<TournamentScreen> {
         ),
       ),
     );
+  }
+
+  int tourIndex;
+  TournamentModel editData() {
+    TournamentModel tournamentModel = TournamentModel();
+    tournamentModelList.tournamentModel.forEach((element) {
+      if (tourIndex == element.id) {
+        tournamentModel = element;
+        print("data is ${element.name}");
+      }
+    });
+    return tournamentModel;
   }
 
   String getName(int Id) {

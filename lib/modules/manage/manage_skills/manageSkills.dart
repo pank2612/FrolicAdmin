@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/skillsModel.dart';
 import 'package:frolicsports/models/tournamentModel.dart';
 import 'package:frolicsports/modules/manage/manage_skills/addSkills.dart';
@@ -176,7 +177,7 @@ class _ManageSkillsScreenState extends State<ManageSkillsScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            numbers("${index + 1}"),
+                                            numbers(skillsModel.id.toString()),
                                             normalText(getName(
                                                 skillsModel.tournamentId)),
                                             normalText(
@@ -187,24 +188,43 @@ class _ManageSkillsScreenState extends State<ManageSkillsScreen> {
                                                 skillsModel.min.toString()),
                                             normalText(
                                                 skillsModel.max.toString()),
-                                            Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.08,
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.close,
-                                                      color:
-                                                          Colors.red.shade700,
-                                                    ),
-                                                    Icon(
-                                                      Icons.mode_edit,
-                                                      color: Colors.orange,
-                                                    )
-                                                  ],
-                                                )),
+                                            USER_TYPE == "admin"
+                                                ? Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.08,
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.close,
+                                                          color: Colors
+                                                              .red.shade700,
+                                                        ),
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            skillIndex =
+                                                                index + 1;
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            AddSkills(
+                                                                              skillsModel: editData(),
+                                                                              edit: "edit",
+                                                                            )));
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.mode_edit,
+                                                            color:
+                                                                Colors.orange,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ))
+                                                : Text(""),
                                           ],
                                         ),
                                       ),
@@ -311,6 +331,18 @@ class _ManageSkillsScreenState extends State<ManageSkillsScreen> {
     );
   }
 
+  int skillIndex;
+  SkillsModel editData() {
+    SkillsModel skillsModel = SkillsModel();
+    skillsModelList.skillsModel.forEach((element) {
+      if (skillIndex == element.id) {
+        skillsModel = element;
+        print("data is ${element.name}");
+      }
+    });
+    return skillsModel;
+  }
+
   Widget numbers(String name) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.02,
@@ -332,7 +364,12 @@ class _ManageSkillsScreenState extends State<ManageSkillsScreen> {
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddSkills()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddSkills(
+                        edit: "add",
+                        skillsModel: editData(),
+                      )));
         },
         height: 50,
         // elevation: 10,

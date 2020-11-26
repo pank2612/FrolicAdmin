@@ -16,6 +16,9 @@ import 'package:frolicsports/services/torunaments.dart';
 import 'package:intl/intl.dart';
 
 class AddTournament extends StatefulWidget {
+  String edit;
+  TournamentModel tournamentModel;
+  AddTournament({this.edit, this.tournamentModel});
   @override
   _AddTournamentState createState() => _AddTournamentState();
 }
@@ -24,9 +27,6 @@ class _AddTournamentState extends State<AddTournament> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _logoController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
   TextEditingController _maxPointsController = TextEditingController();
   TextEditingController _playersController = TextEditingController();
   TextEditingController _maxSingleTeamController = TextEditingController();
@@ -89,7 +89,7 @@ class _AddTournamentState extends State<AddTournament> {
     );
   }
 
-  Widget textFieldWithImage(String name) {
+  Widget textFieldWithImage(String name, String choose) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +131,7 @@ class _AddTournamentState extends State<AddTournament> {
               ),
               Padding(
                 child: imageText == null
-                    ? Text("No file chosen")
+                    ? Text(choose)
                     : Text(imageText.toString()),
                 padding: EdgeInsets.zero,
               )
@@ -170,7 +170,9 @@ class _AddTournamentState extends State<AddTournament> {
   }
 
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintText]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +191,7 @@ class _AddTournamentState extends State<AddTournament> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintText,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -347,19 +349,7 @@ class _AddTournamentState extends State<AddTournament> {
         maxPoints: int.parse(_maxPointsController.text),
         maxSingleTeam: int.parse(_maxSingleTeamController.text),
         playerFolderName: "tournament/ronnie.png",
-        //   "$REF_FROM_URL$STORAGE_FOLDER_TOURNAMENT${_titleController.text}/Players/${_file.name.toString()}",
-//        +
-//            'frolicsports/' +
-//            'tournaments/' +
-//            'IPL2021/' +
-//            'players/',
         teamFolderName: "tournament/ronnie.png",
-        // "$REF_FROM_URL$STORAGE_FOLDER_TOURNAMENT${_titleController.text}/Teams/${_file.name.toString()}",
-//        "http:jhgsdhjgsdf" +
-//            'frolicsports/' +
-//            'tournaments/' +
-//            'IPL2021/' +
-//            'teams/',
         country: _selectCountry,
         sportsId: int.parse(_category));
     getPostTournaments.postTournaments(
@@ -375,9 +365,20 @@ class _AddTournamentState extends State<AddTournament> {
     _loading = true;
     // TODO: implement initState
     super.initState();
+//    _titleController = TextEditingController(text: widget.tournamentModel.name);
+//    _descriptionController =
+//        TextEditingController(text: widget.tournamentModel.description);
+//    _deadlineSecondsController = TextEditingController(
+//        text: "${widget.tournamentModel.deadlineSeconds}");
+//    _maxSingleTeamController = TextEditingController(
+//        text: widget.tournamentModel.maxSingleTeam.toString());
+//    _maxPointsController = TextEditingController(
+//        text: widget.tournamentModel.maxPoints.toString());
+//    _playersController = TextEditingController(
+//        text: widget.tournamentModel.maxPlayers.toString());
     GetSports getSports = GetSports();
+    print("TOUR DATA ${widget.tournamentModel.name}");
     getSports.getSports1().then((sports) {
-      // print("Sports ${sports[0].name}");
       setState(() {
         _sportsList = sports.sportsModel;
         _loading = false;
@@ -427,16 +428,32 @@ class _AddTournamentState extends State<AddTournament> {
                             name: "SELECT SPORTS",
                             selectedCategory: _category,
                             categories: _sportsList),
-                        textFieldWithText("TITLE", _titleController,
-                            ValidationKey.title, TextInputType.text)
+                        textFieldWithText(
+                            "TITLE",
+                            _titleController,
+                            ValidationKey.title,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.name
+                                : "")
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Description", _descriptionController,
-                            ValidationKey.Description, TextInputType.text),
-                        textFieldWithImage("LOGO")
+                        textFieldWithText(
+                            "Description",
+                            _descriptionController,
+                            ValidationKey.Description,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.description
+                                : ""),
+                        textFieldWithImage(
+                            "LOGO",
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.logo
+                                : "No Choose file")
                       ],
                     ),
                     Row(
@@ -450,10 +467,22 @@ class _AddTournamentState extends State<AddTournament> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Max Points", _maxPointsController,
-                            ValidationKey.maxPoints, TextInputType.number),
-                        textFieldWithText("Players", _playersController,
-                            ValidationKey.players, TextInputType.number)
+                        textFieldWithText(
+                            "Max Points",
+                            _maxPointsController,
+                            ValidationKey.maxPoints,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.maxPoints.toString()
+                                : ""),
+                        textFieldWithText(
+                            "Players",
+                            _playersController,
+                            ValidationKey.players,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.maxPlayers.toString()
+                                : "")
                       ],
                     ),
                     Row(
@@ -463,12 +492,20 @@ class _AddTournamentState extends State<AddTournament> {
                             "Max Player From Single Team",
                             _maxSingleTeamController,
                             ValidationKey.maxSingleTeam,
-                            TextInputType.number),
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.maxSingleTeam
+                                    .toString()
+                                : ""),
                         textFieldWithText(
                             "DeadLine In Seconds",
                             _deadlineSecondsController,
                             ValidationKey.deadlineSeconds,
-                            TextInputType.number)
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.deadlineSeconds
+                                    .toString()
+                                : "")
                       ],
                     ),
                     Row(
@@ -495,13 +532,21 @@ class _AddTournamentState extends State<AddTournament> {
                         ),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.05),
-                        RaisedButton(
-                          onPressed: () {
-                            _submit();
-                          },
-                          color: Colors.lightBlue,
-                          child: Text("Submit"),
-                        )
+                        widget.edit == "edit"
+                            ? RaisedButton(
+                                onPressed: () {
+                                  _editTour();
+                                },
+                                color: Colors.lightBlue,
+                                child: Text("Edit"),
+                              )
+                            : RaisedButton(
+                                onPressed: () {
+                                  _submit();
+                                },
+                                color: Colors.lightBlue,
+                                child: Text("Submit"),
+                              )
                       ],
                     ),
                   ],
@@ -535,11 +580,47 @@ class _AddTournamentState extends State<AddTournament> {
     }
   }
 
+  _editTour() async {
+    if (_formKey.currentState.validate()) {
+      TournamentModel tournamentModel = TournamentModel(
+          description: _descriptionController.text == null
+              ? widget.tournamentModel.deadlineSeconds
+              : _descriptionController.text,
+          deadlineSeconds: int.parse(_deadlineSecondsController.text) == null
+              ? widget.tournamentModel.deadlineSeconds
+              : int.parse(_deadlineSecondsController.text),
+          enabled: isEnabled,
+          name: _titleController.text == null
+              ? widget.tournamentModel.name
+              : _titleController.text,
+          startDate: startDateAndTime,
+          endDate: endDateAndTime,
+          maxPlayers: int.parse(_playersController.text) == null
+              ? widget.tournamentModel.maxPlayers
+              : int.parse(_playersController.text),
+          logo: imageText == null ? widget.tournamentModel.logo : imageText,
+          maxPoints: int.parse(_maxPointsController.text) == null
+              ? widget.tournamentModel.maxPoints
+              : int.parse(_maxPointsController.text),
+          maxSingleTeam: int.parse(_maxSingleTeamController.text) == null
+              ? widget.tournamentModel.maxSingleTeam
+              : int.parse(_maxSingleTeamController.text),
+          playerFolderName: "tournament/ronnie.png",
+          teamFolderName: "tournament/ronnie.png",
+          country: _selectCountry == null ? "IND" : "IND",
+          sportsId: int.parse(_category),
+          id: widget.tournamentModel.id);
+      await getPostTournaments.editTournaments(
+        tournamentModelObject: tournamentModel,
+      );
+      uploadImageToFirebaseStorage();
+    }
+  }
+
   File _file;
   uploadImageToFirebaseStorage() {
     final path =
         "$STORAGE_FOLDER_TOURNAMENT${_titleController.text}/${_file.name.toString()}";
-    //_file = file;
     fb.storage().refFromURL(REF_FROM_URL).child(path).put(_file);
   }
 
@@ -561,15 +642,7 @@ class _AddTournamentState extends State<AddTournament> {
   String imageText;
   uploadImageToStorage() {
     uploadImage(onSelected: (file) {
-      // print("data issss ${file.name.toString()}");
-      // final path = "FrolicSports/${file.name.toString()}";
       _file = file;
-//      fb
-//          .storage()
-//          .refFromURL("gs://frolicsports-39c94.appspot.com")
-//          .child(path)
-//          .put(file);
-
       imageText = file.name.toString();
 
       // print("data is ${imageText.toString()}");

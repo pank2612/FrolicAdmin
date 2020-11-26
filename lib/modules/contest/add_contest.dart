@@ -10,6 +10,9 @@ import 'package:frolicsports/services/matchesServices.dart';
 import 'package:frolicsports/services/teamsServices.dart';
 
 class AddContest extends StatefulWidget {
+  String edit;
+  ContestsModel contestsModel;
+  AddContest({this.edit, this.contestsModel});
   @override
   _AddContestState createState() => _AddContestState();
 }
@@ -21,11 +24,11 @@ class _AddContestState extends State<AddContest> {
   TextEditingController _entryAmountController = TextEditingController();
   TextEditingController _maxEntriesController = TextEditingController();
   TextEditingController _maxEntryPerUserController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
-  TextEditingController _statusController = TextEditingController();
   TextEditingController _contestCategoryController = TextEditingController();
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintText]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +47,7 @@ class _AddContestState extends State<AddContest> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintText,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -133,24 +136,16 @@ class _AddContestState extends State<AddContest> {
     String team1Name = '';
     String team2Name = '';
     _matchList.forEach((match) {
-      print("ID1 is  ${match.id}");
-      print("ID2 is  $Id");
       if (match.id == Id) {
-        print("I3 is  ${match.id}");
-        print("ID4 is  $Id");
-        //matchName = match.name;
         teamsModelList.teamsModel.forEach((team) {
-          print("team1Name $team1Name");
           if (team.id == match.team1Id) {
             team1Name = team.shortName;
           }
           if (team.id == match.team2Id) {
             team2Name = team.shortName;
           }
-          print("team2Name $team2Name");
         });
         matchName = team1Name + " v/s " + team2Name;
-        print("matchName $matchName");
       }
     });
     return matchName;
@@ -245,8 +240,14 @@ class _AddContestState extends State<AddContest> {
                             name: "Select Match",
                             selectedCategory: _matchId,
                             categories: _matchList),
-                        textFieldWithText("TITLE", _titleController,
-                            ValidationKey.title, TextInputType.text)
+                        textFieldWithText(
+                            "TITLE",
+                            _titleController,
+                            ValidationKey.title,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.contestsModel.name
+                                : "")
                       ],
                     ),
                     Row(
@@ -256,9 +257,18 @@ class _AddContestState extends State<AddContest> {
                             "Entry Amount",
                             _entryAmountController,
                             ValidationKey.entryAmount,
-                            TextInputType.number),
-                        textFieldWithText("Max Entries", _maxEntriesController,
-                            ValidationKey.maxEntries, TextInputType.number)
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.contestsModel.entryAmount.toString()
+                                : ""),
+                        textFieldWithText(
+                            "Max Entries",
+                            _maxEntriesController,
+                            ValidationKey.maxEntries,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.contestsModel.maxEntries.toString()
+                                : "")
                       ],
                     ),
                     Row(
@@ -268,12 +278,19 @@ class _AddContestState extends State<AddContest> {
                             "Max Entry Per User",
                             _maxEntryPerUserController,
                             ValidationKey.maxEntryPerUSer,
-                            TextInputType.number),
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.contestsModel.maxEntriesPerUser
+                                    .toString()
+                                : ""),
                         textFieldWithText(
                             "Contest Category",
                             _contestCategoryController,
                             ValidationKey.name,
-                            TextInputType.text)
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.contestsModel.contestCategory
+                                : "")
                       ],
                     ),
                     Row(
@@ -292,13 +309,21 @@ class _AddContestState extends State<AddContest> {
                         ),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.05),
-                        RaisedButton(
-                          onPressed: () {
-                            _submit();
-                          },
-                          color: Colors.lightBlue,
-                          child: Text("Submit"),
-                        )
+                        widget.edit == "edit"
+                            ? RaisedButton(
+                                onPressed: () {
+                                  _editContest();
+                                },
+                                color: Colors.lightBlue,
+                                child: Text("EDIT"),
+                              )
+                            : RaisedButton(
+                                onPressed: () {
+                                  _submit();
+                                },
+                                color: Colors.lightBlue,
+                                child: Text("Submit"),
+                              )
                       ],
                     )
                   ],
@@ -338,18 +363,57 @@ class _AddContestState extends State<AddContest> {
     ));
   }
 
+  _editContest() {
+    ContestsModel contestsModel = ContestsModel(
+        name: _titleController.text == null
+            ? widget.contestsModel.name
+            : _titleController.text,
+        contestCategory: _contestCategoryController.text == null
+            ? widget.contestsModel.contestCategory
+            : _contestCategoryController.text,
+        entryAmount: int.parse(_entryAmountController.text) == null
+            ? widget.contestsModel.entryAmount
+            : int.parse(_entryAmountController.text),
+        maxEntries: int.parse(_maxEntriesController.text) == null
+            ? widget.contestsModel.maxEntries
+            : int.parse(_maxEntriesController.text),
+        maxEntriesPerUser: int.parse(_maxEntryPerUserController.text) == null
+            ? widget.contestsModel.maxEntriesPerUser
+            : int.parse(_maxEntryPerUserController.text),
+        matchId: int.parse(_matchId) == null
+            ? widget.contestsModel.matchId
+            : int.parse(_matchId),
+        status: isEnabled == null ? widget.contestsModel.status : isEnabled,
+        id: widget.contestsModel.id);
+    if (_formKey.currentState.validate()) {
+      if (int.parse(_maxEntryPerUserController.text) *
+              int.parse(_maxEntriesController.text) <=
+          int.parse(_entryAmountController.text)) {
+        getPostContest.editContests(contestModelObject: contestsModel);
+        return;
+      } else {
+        showDialog("EntryAmount greater than or equal to the multiple"
+            " of max entry per user and total entry ${int.parse(_maxEntryPerUserController.text) * int.parse(_maxEntriesController.text)}and  ${int.parse(_entryAmountController.text)}");
+        print("asdfghjk");
+        return;
+      }
+    }
+  }
+
   _submit() {
     if (_formKey.currentState.validate()) {
-      if (_maxEntryPerUserController.hashCode *
-              _maxEntriesController.hashCode ==
-          _entryAmountController.hashCode) {
+      if (int.parse(_maxEntryPerUserController.text) *
+              int.parse(_maxEntriesController.text) <=
+          int.parse(_entryAmountController.text)) {
         contestName.contains(_titleController.text)
             ? showDialog("This title already created")
             : valid();
+        return;
       } else {
-        showDialog("EntryAmount can't be less than multiple"
-            " of max entry per user and total entry");
+        showDialog("EntryAmount greater than or equal to the multiple"
+            " of max entry per user and total entry ${int.parse(_maxEntryPerUserController.text) * int.parse(_maxEntriesController.text)}and  ${int.parse(_entryAmountController.text)}");
         print("asdfghjk");
+        return;
       }
     }
   }

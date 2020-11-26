@@ -13,6 +13,7 @@ class ManageSportsScreen extends StatefulWidget {
 
 class _ManageSportsScreenState extends State<ManageSportsScreen> {
   bool _loading;
+  int sportsIndex;
   @override
   void initState() {
     // TODO: implement initState
@@ -126,7 +127,9 @@ class _ManageSportsScreenState extends State<ManageSportsScreen> {
                                   normalText("Name"),
                                   normalText("Short Name"),
                                   normalText("Picture"),
-                                  normalText("Action"),
+                                  USER_TYPE == "admin"
+                                      ? normalText("Action")
+                                      : Text(""),
                                 ],
                               ),
                             ),
@@ -154,7 +157,8 @@ class _ManageSportsScreenState extends State<ManageSportsScreen> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  numbers("${index + 1}"),
+                                                  numbers(sportsModel.id
+                                                      .toString()),
                                                   normalText(sportsModel.name
                                                       .toString()),
                                                   normalText(sportsModel
@@ -185,6 +189,9 @@ class _ManageSportsScreenState extends State<ManageSportsScreen> {
                                                                 width: 120,
                                                                 height: 120,
                                                                 child: CircleAvatar(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .transparent,
                                                                     child:
                                                                         CircularProgressIndicator()));
                                                           } else if (!snapShot
@@ -198,7 +205,12 @@ class _ManageSportsScreenState extends State<ManageSportsScreen> {
                                                                   CircleAvatar(
                                                                 radius: 30,
                                                                 backgroundColor:
-                                                                    Colors.red,
+                                                                    Colors
+                                                                        .transparent,
+                                                                child: Image.network(
+                                                                    "https://upload.wikimedia.org/wikipedia/commons"
+                                                                    "/thumb/d/d1/Icons8_flat_businessman.svg/768"
+                                                                    "px-Icons8_flat_businessman.svg.png"),
 //                                                              child: Image.network(
 //                                                                  snapShot.data
 //                                                                      .toString()),
@@ -209,17 +221,20 @@ class _ManageSportsScreenState extends State<ManageSportsScreen> {
                                                             return Container(
                                                               alignment: Alignment
                                                                   .centerLeft,
-                                                              width: 150,
-                                                              height: 150,
+                                                              width: 20,
+                                                              height: 60,
                                                               child:
                                                                   CircleAvatar(
-                                                                radius: 30,
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                radius: 35,
                                                                 child: Image
                                                                     .network(
                                                                   snapShot.data
                                                                       .toString(),
                                                                   fit: BoxFit
-                                                                      .contain,
+                                                                      .fill,
                                                                 ),
                                                               ),
                                                             );
@@ -227,26 +242,45 @@ class _ManageSportsScreenState extends State<ManageSportsScreen> {
                                                           return null;
                                                         },
                                                       )),
-                                                  Container(
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                  USER_TYPE == "admin"
+                                                      ? Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.08,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.close,
-                                                            color: Colors
-                                                                .red.shade700,
-                                                          ),
-                                                          Icon(
-                                                            Icons.mode_edit,
-                                                            color:
-                                                                Colors.orange,
-                                                          )
-                                                        ],
-                                                      )),
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.close,
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade700,
+                                                              ),
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  sportsIndex =
+                                                                      index + 1;
+                                                                  print(
+                                                                      "Index is ${index + 1}");
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => AddSports(
+                                                                                edit: "edit",
+                                                                                sportsModel: editData(),
+                                                                              )));
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .mode_edit,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ))
+                                                      : Text(""),
                                                 ],
                                               ),
                                             ),
@@ -375,7 +409,12 @@ class _ManageSportsScreenState extends State<ManageSportsScreen> {
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddSports()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddSports(
+                        edit: "add",
+                        sportsModel: editData(),
+                      )));
         },
         height: 50,
         // elevation: 10,
@@ -398,6 +437,17 @@ class _ManageSportsScreenState extends State<ManageSportsScreen> {
         ),
       ),
     );
+  }
+
+  SportsModel editData() {
+    SportsModel sportsModel = SportsModel();
+    sportsModelList.sportsModel.forEach((element) {
+      if (sportsIndex == element.id) {
+        sportsModel = element;
+        print("data is ${element.name}");
+      }
+    });
+    return sportsModel;
   }
 
   Future<Uri> downloadUrl(String photoUrl) {

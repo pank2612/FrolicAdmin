@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/matchesModel.dart';
 import 'package:frolicsports/models/playersModel.dart';
@@ -36,6 +37,29 @@ class GetPostMatches {
           body: encodedData);
       print(response.statusCode);
       if (response.statusCode == 200) {
+        //function();
+        print("Data Added");
+        var jsonData = jsonDecode(response.body);
+        print("JsonData is : $jsonData");
+      }
+      // throw "Something went wrong ${response.statusCode.toString()}";
+    } catch (e) {
+      print("Error is ${e.toString()}");
+    }
+  }
+
+  editMatches({MatchesModel matchesModelObject}) async {
+    var encodedData = jsonEncode(matchesModelObject.toJson());
+    print("encoded Data $encodedData");
+    try {
+      var response = await http.put(
+          "${HTTP_URL}matches/${matchesModelObject.id}",
+          headers: {HttpHeaders.contentTypeHeader: "application/json"},
+          body: encodedData);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "Edit Successfully", gravity: ToastGravity.CENTER);
         //function();
         print("Data Added");
         var jsonData = jsonDecode(response.body);

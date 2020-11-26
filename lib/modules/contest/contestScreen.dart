@@ -203,7 +203,8 @@ class _ContestScreenState extends State<ContestScreen> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  numbers("${index + 1}"),
+                                                  numbers(contestModel.id
+                                                      .toString()),
                                                   normalText(getName(
                                                       contestModel.matchId)),
                                                   normalText(contestModel.name
@@ -230,10 +231,26 @@ class _ContestScreenState extends State<ContestScreen> {
                                                             color: Colors
                                                                 .red.shade700,
                                                           ),
-                                                          Icon(
-                                                            Icons.mode_edit,
-                                                            color:
-                                                                Colors.orange,
+                                                          IconButton(
+                                                            onPressed: () {
+                                                              contestIndex =
+                                                                  index + 1;
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          AddContest(
+                                                                            edit:
+                                                                                "edit",
+                                                                            contestsModel:
+                                                                                editData(),
+                                                                          )));
+                                                            },
+                                                            icon: Icon(
+                                                              Icons.mode_edit,
+                                                              color:
+                                                                  Colors.orange,
+                                                            ),
                                                           )
                                                         ],
                                                       )),
@@ -331,6 +348,18 @@ class _ContestScreenState extends State<ContestScreen> {
     );
   }
 
+  int contestIndex;
+  ContestsModel editData() {
+    ContestsModel contestsModel = ContestsModel();
+    contestsModelList.contestsModel.forEach((element) {
+      if (contestIndex == element.id) {
+        contestsModel = element;
+        print("data is ${element.name}");
+      }
+    });
+    return contestsModel;
+  }
+
   _addButton() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.20,
@@ -338,7 +367,12 @@ class _ContestScreenState extends State<ContestScreen> {
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddContest()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddContest(
+                        edit: "add",
+                        contestsModel: editData(),
+                      )));
         },
         height: 50,
         // elevation: 10,

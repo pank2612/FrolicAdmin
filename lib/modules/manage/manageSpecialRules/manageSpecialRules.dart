@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/specialRulesModel.dart';
 import 'package:frolicsports/models/tournamentModel.dart';
 import 'package:frolicsports/modules/manage/manageSpecialRules/addSpecialRules.dart';
@@ -83,15 +84,16 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
                             children: [
                               Container(
                                 padding: EdgeInsets.only(
-                                    left:
-                                        MediaQuery.of(context).size.width * 0.20),
+                                    left: MediaQuery.of(context).size.width *
+                                        0.20),
                                 child: Text("Search:",
                                     style: TextStyle(
                                       fontSize: 17,
                                     )),
                               ),
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.01,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.01,
                               ),
                               Row(
                                 children: [
@@ -101,14 +103,14 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
                                         fontSize: 20, color: Colors.lightBlue),
                                   ),
                                   SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.112,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.112,
                                   ),
                                   Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.35,
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.05,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.35,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
                                     child: TextField(
                                         // controller: controller,
                                         style: TextStyle(
@@ -134,13 +136,14 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 2),
                               margin: EdgeInsets.only(
-                                  top:
-                                      MediaQuery.of(context).size.height * 0.115),
+                                  top: MediaQuery.of(context).size.height *
+                                      0.115),
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height * 0.08,
                               color: Colors.grey.shade300,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   numbers("#"),
                                   normalText("Tournament"),
@@ -160,8 +163,9 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
                                       itemBuilder: (context, index) {
                                         SpecialRulesModel specialRulesModel =
                                             SpecialRulesModel();
-                                        specialRulesModel = specialRulesModelList
-                                            .specialRulesModel[index];
+                                        specialRulesModel =
+                                            specialRulesModelList
+                                                .specialRulesModel[index];
                                         return Column(
                                           children: [
                                             Container(
@@ -179,7 +183,9 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  numbers("${index + 1}"),
+                                                  numbers(specialRulesModel.id
+                                                      .toString()),
+                                                  // normalText(),
                                                   normalText(getName(
                                                       specialRulesModel
                                                           .tournamentId)),
@@ -192,25 +198,43 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
                                                   normalText(specialRulesModel
                                                       .points
                                                       .toString()),
-                                                  Container(
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                  USER_TYPE == "admin"
+                                                      ? Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.08,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.close,
-                                                            color: Colors
-                                                                .red.shade700,
-                                                          ),
-                                                          Icon(
-                                                            Icons.mode_edit,
-                                                            color: Colors.orange,
-                                                          )
-                                                        ],
-                                                      )),
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.close,
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade700,
+                                                              ),
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  sRuleIndex =
+                                                                      index + 1;
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => AddSpecialRules(
+                                                                                edit: "edit",
+                                                                                specialRulesModel: editData(),
+                                                                              )));
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .mode_edit,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ))
+                                                      : Text(""),
                                                 ],
                                               ),
                                             ),
@@ -231,7 +255,8 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("Showing 0 to 0 of 0 entries"),
                                   Row(
@@ -304,6 +329,18 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
     );
   }
 
+  int sRuleIndex;
+  SpecialRulesModel editData() {
+    SpecialRulesModel specialRulesModel = SpecialRulesModel();
+    specialRulesModelList.specialRulesModel.forEach((element) {
+      if (sRuleIndex == element.id) {
+        specialRulesModel = element;
+        print("data is ${element.name}");
+      }
+    });
+    return specialRulesModel;
+  }
+
   Widget normalText(String name) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.08,
@@ -339,8 +376,13 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
       child: MaterialButton(
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddSpecialRules()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddSpecialRules(
+                        edit: "add",
+                        specialRulesModel: editData(),
+                      )));
         },
         height: 50,
         // elevation: 10,

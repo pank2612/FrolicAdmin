@@ -215,134 +215,163 @@ class _ManagePlayerScreenState extends State<ManagePlayerScreen> {
                                                       .height *
                                                   0.1,
                                               child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  numbers("${index + 1}"),
-                                                  normalText(
-                                                      // teamName[0].toString()
-                                                      //name.toString()
-                                                      getName(
-                                                          playersModel.teamId)),
-                                                  normalText(playersModel.name
-                                                      .toString()),
-                                                  normalText(playersModel.status
-                                                      .toString()),
-                                                  normalText(playersModel
-                                                      .shortName
-                                                      .toString()),
-                                                  normalText(playersModel
-                                                      .skillsId
-                                                      .toString()),
-                                                  normalText(playersModel
-                                                      .credits
-                                                      .toString()),
-                                                  normalText(playersModel.points
-                                                      .toString()),
-                                                  Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.08,
-                                                      child: StreamBuilder(
-                                                        stream: downloadUrl(
-                                                                // "FrolicSports/Tournaments/ronnie.jpg"
-                                                                playersModel
-                                                                    .name,
-                                                                playersModel
-                                                                    .picture
-                                                                    .toString())
-                                                            .asStream(),
-                                                        builder: (context,
-                                                            snapShot) {
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    numbers(playersModel.id
+                                                        .toString()),
+                                                    normalText(
+                                                        // teamName[0].toString()
+                                                        //name.toString()
+                                                        getName(playersModel
+                                                            .teamId)),
+                                                    normalText(playersModel.name
+                                                        .toString()),
+                                                    normalText(playersModel
+                                                        .status
+                                                        .toString()),
+                                                    normalText(playersModel
+                                                        .shortName
+                                                        .toString()),
+                                                    normalText(playersModel
+                                                        .skillsId
+                                                        .toString()),
+                                                    normalText(playersModel
+                                                        .credits
+                                                        .toString()),
+                                                    normalText(playersModel
+                                                        .points
+                                                        .toString()),
+                                                    Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.08,
+                                                        child: StreamBuilder(
+                                                          stream: downloadUrl(
+                                                                  // "FrolicSports/Tournaments/ronnie.jpg"
+                                                                  playersModel
+                                                                      .name,
+                                                                  playersModel
+                                                                      .picture
+                                                                      .toString())
+                                                              .asStream(),
+                                                          builder: (context,
+                                                              snapShot) {
 //                                                        print(
 //                                                            "logo is ${sportsModel.logo.length}");
-                                                          if (snapShot
-                                                                  .connectionState ==
-                                                              ConnectionState
-                                                                  .waiting) {
-                                                            return Container(
+                                                            if (snapShot
+                                                                    .connectionState ==
+                                                                ConnectionState
+                                                                    .waiting) {
+                                                              return Container(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft,
+                                                                  width: 120,
+                                                                  height: 120,
+                                                                  child: CircleAvatar(
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      child:
+                                                                          CircularProgressIndicator()));
+                                                            } else if (!snapShot
+                                                                .hasData) {
+                                                              return Container(
                                                                 alignment: Alignment
                                                                     .centerLeft,
-                                                                width: 120,
-                                                                height: 120,
-                                                                child: CircleAvatar(
-                                                                    child:
-                                                                        CircularProgressIndicator()));
-                                                          } else if (!snapShot
-                                                              .hasData) {
-                                                            return Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              width: 200,
-                                                              height: 200,
-                                                              child:
-                                                                  CircleAvatar(
-                                                                radius: 30,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .transparent,
+                                                                width: 200,
+                                                                height: 200,
                                                                 child:
                                                                     CircleAvatar(
-                                                                  child: Image.network(
-                                                                      "https://upload.wikimedia.org/wikipedia/commons"
-                                                                      "/thumb/d/d1/Icons8_flat_businessman.svg/768px-Icons8_flat_businessman.svg.png"),
-                                                                ),
+                                                                  radius: 30,
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  child:
+                                                                      CircleAvatar(
+                                                                    child: Image.network(
+                                                                        "https://upload.wikimedia.org/wikipedia/commons"
+                                                                        "/thumb/d/d1/Icons8_flat_businessman.svg/768px-Icons8_flat_businessman.svg.png"),
+                                                                  ),
 //                                                              child: Image.network(
 //                                                                  snapShot.data
 //                                                                      .toString()),
-                                                              ),
-                                                            );
-                                                          } else if (snapShot
-                                                              .hasData) {
-                                                            return Container(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              width: 150,
-                                                              height: 150,
-                                                              child:
-                                                                  CircleAvatar(
-                                                                radius: 30,
-                                                                child: Image
-                                                                    .network(
-                                                                  snapShot.data
-                                                                      .toString(),
-                                                                  fit: BoxFit
-                                                                      .contain,
                                                                 ),
-                                                              ),
-                                                            );
-                                                          }
-                                                          return null;
-                                                        },
-                                                      )),
-                                                  normalText(playersModel
-                                                      .country
-                                                      .toString()),
-                                                  Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.08,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.close,
-                                                            color: Colors
-                                                                .red.shade700,
-                                                          ),
-                                                          Icon(
-                                                            Icons.mode_edit,
-                                                            color:
-                                                                Colors.orange,
-                                                          )
-                                                        ],
-                                                      )),
-                                                ],
-                                              ),
+                                                              );
+                                                            } else if (snapShot
+                                                                .hasData) {
+                                                              return Container(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                width: 20,
+                                                                height: 60,
+                                                                child:
+                                                                    CircleAvatar(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  radius: 35,
+                                                                  child: Image
+                                                                      .network(
+                                                                    snapShot
+                                                                        .data
+                                                                        .toString(),
+                                                                    fit: BoxFit
+                                                                        .fill,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }
+                                                            return null;
+                                                          },
+                                                        )),
+                                                    normalText(playersModel
+                                                        .country
+                                                        .toString()),
+                                                    USER_TYPE == "admin"
+                                                        ? Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.08,
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(
+                                                                  Icons.close,
+                                                                  color: Colors
+                                                                      .red
+                                                                      .shade700,
+                                                                ),
+                                                                IconButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    playerIndex =
+                                                                        index +
+                                                                            1;
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => AddPlayer(
+                                                                                  edit: "edit",
+                                                                                  playersModel: editData(),
+                                                                                )));
+                                                                  },
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .mode_edit,
+                                                                    color: Colors
+                                                                        .orange,
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ))
+                                                        : Text(''),
+                                                  ]),
                                             ),
                                             Divider(
                                               thickness: 1,
@@ -449,6 +478,18 @@ class _ManagePlayerScreenState extends State<ManagePlayerScreen> {
     );
   }
 
+  int playerIndex;
+  PlayersModel editData() {
+    PlayersModel playersModel = PlayersModel();
+    playersModelList.playersModel.forEach((element) {
+      if (playerIndex == element.id) {
+        playersModel = element;
+        print("data is ${element.name}");
+      }
+    });
+    return playersModel;
+  }
+
   Widget numbers(String name) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.02,
@@ -478,7 +519,12 @@ class _ManagePlayerScreenState extends State<ManagePlayerScreen> {
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddPlayer()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddPlayer(
+                        edit: "add",
+                        playersModel: editData(),
+                      )));
         },
         height: 50,
         // elevation: 10,

@@ -7,6 +7,9 @@ import 'package:frolicsports/services/skillsServices.dart';
 import 'package:frolicsports/services/torunaments.dart';
 
 class AddSkills extends StatefulWidget {
+  String edit;
+  SkillsModel skillsModel;
+  AddSkills({this.edit, this.skillsModel});
   @override
   _AddSkillsState createState() => _AddSkillsState();
 }
@@ -17,11 +20,11 @@ class _AddSkillsState extends State<AddSkills> {
   TextEditingController _maxController = TextEditingController();
   TextEditingController _minController = TextEditingController();
   TextEditingController _ShortCodeController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
-  TextEditingController _maxPointsController = TextEditingController();
-  TextEditingController _playersController = TextEditingController();
+
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintText]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +43,7 @@ class _AddSkillsState extends State<AddSkills> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintText,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -188,33 +191,65 @@ class _AddSkillsState extends State<AddSkills> {
                             selectedCategory: _tourName,
                             categories: _tournamentList,
                             name: "SELECT TOURNAMENT"),
-                        textFieldWithText("Name", _nameController,
-                            ValidationKey.name, TextInputType.text)
+                        textFieldWithText(
+                            "Name",
+                            _nameController,
+                            ValidationKey.name,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.skillsModel.name
+                                : "")
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Short Code", _ShortCodeController,
-                            ValidationKey.shortCode, TextInputType.text),
-                        textFieldWithText("Max", _maxController,
-                            ValidationKey.maxPlayers, TextInputType.number)
+                        textFieldWithText(
+                            "Short Code",
+                            _ShortCodeController,
+                            ValidationKey.shortCode,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.skillsModel.shortName
+                                : ""),
+                        textFieldWithText(
+                            "Max",
+                            _maxController,
+                            ValidationKey.maxPlayers,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.skillsModel.max.toString()
+                                : "")
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Min", _minController,
-                            ValidationKey.minPlayers, TextInputType.number),
+                        textFieldWithText(
+                            "Min",
+                            _minController,
+                            ValidationKey.minPlayers,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.skillsModel.min.toString()
+                                : ""),
                       ],
                     ),
-                    RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text("Submit"),
-                      onPressed: () {
-                        _submit();
-                      },
-                    )
+                    widget.edit == "edit"
+                        ? RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("EDIT"),
+                            onPressed: () {
+                              _editSkill();
+                            },
+                          )
+                        : RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("Submit"),
+                            onPressed: () {
+                              _submit();
+                            },
+                          )
                   ],
                 ),
               ),
@@ -223,6 +258,29 @@ class _AddSkillsState extends State<AddSkills> {
         ),
       ),
     );
+  }
+
+  _editSkill() {
+    if (_formKey.currentState.validate()) {
+      SkillsModel skillsModel = SkillsModel(
+          name: _nameController.text == null
+              ? widget.skillsModel.name
+              : _nameController.text,
+          tournamentId: int.parse(_tourName) == null
+              ? widget.skillsModel.tournamentId
+              : int.parse(_tourName),
+          shortName: _ShortCodeController.text == null
+              ? widget.skillsModel.shortName
+              : _ShortCodeController.text,
+          max: int.parse(_maxController.text) == null
+              ? widget.skillsModel.max
+              : int.parse(_maxController.text),
+          min: int.parse(_minController.text) == null
+              ? widget.skillsModel.min
+              : int.parse(_minController.text),
+          id: widget.skillsModel.id);
+      getPostSkills.editSkills(skillsModelObject: skillsModel);
+    }
   }
 
   _submit() {

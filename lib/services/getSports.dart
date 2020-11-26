@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/sportsModel.dart';
 import 'package:http/http.dart' as http;
@@ -26,7 +27,6 @@ class GetSports {
   }
 
   postSports({SportsModel sportsModelObject}) async {
-    String url = "http://localhost/sports";
     var encodedData = jsonEncode(sportsModelObject.toJson());
     print("encoded Data $encodedData");
     try {
@@ -37,6 +37,30 @@ class GetSports {
       if (response.statusCode == 200) {
         print("Data Added");
 
+        var jsonData = jsonDecode(response.body);
+        print("JsonData is : $jsonData");
+      }
+      // throw "Something went wrong ${response.statusCode.toString()}";
+    } catch (e) {
+      print("Error is ${e.toString()}");
+    }
+  }
+
+  editSports({SportsModel sportsModelObject}) async {
+    var encodedData = jsonEncode(sportsModelObject.toJson());
+    print("encoded Data $encodedData");
+    try {
+      var response = await http.put("${HTTP_URL}sports/${sportsModelObject.id}",
+          headers: {HttpHeaders.contentTypeHeader: "application/json"},
+          body: encodedData);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print("Data Added");
+        Fluttertoast.showToast(
+          msg: "Edit Successfully",
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+        );
         var jsonData = jsonDecode(response.body);
         print("JsonData is : $jsonData");
       }

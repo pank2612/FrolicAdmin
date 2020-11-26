@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/playersModel.dart';
 import 'package:frolicsports/models/teamsModel.dart';
@@ -37,6 +38,27 @@ class GetPostTeams {
       print(response.statusCode);
       if (response.statusCode == 200) {
         function();
+        print("Data Added");
+        var jsonData = jsonDecode(response.body);
+        print("JsonData is : $jsonData");
+      }
+      // throw "Something went wrong ${response.statusCode.toString()}";
+    } catch (e) {
+      print("Error is ${e.toString()}");
+    }
+  }
+
+  editTeams({TeamsModel teamsModelObject}) async {
+    var encodedData = jsonEncode(teamsModelObject.toJson());
+    print("encoded Data $encodedData");
+    try {
+      var response = await http.put("${HTTP_URL}teams/${teamsModelObject.id}",
+          headers: {HttpHeaders.contentTypeHeader: "application/json"},
+          body: encodedData);
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: "Edit Successfully", gravity: ToastGravity.CENTER);
         print("Data Added");
         var jsonData = jsonDecode(response.body);
         print("JsonData is : $jsonData");

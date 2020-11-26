@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/contestsModel.dart';
 import 'package:frolicsports/models/prizeModel.dart';
 import 'package:frolicsports/modules/prize/addPrize.dart';
@@ -171,7 +172,8 @@ class _PrizeScreenState extends State<PrizeScreen> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  numbers("${index + 1}"),
+                                                  numbers(
+                                                      prizeModel.id.toString()),
                                                   normalText(getName(
                                                       prizeModel.contestId)),
                                                   normalText(prizeModel
@@ -184,26 +186,45 @@ class _PrizeScreenState extends State<PrizeScreen> {
                                                       .toString()),
                                                   normalText(prizeModel.status
                                                       .toString()),
-                                                  Container(
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                  USER_TYPE == "admin"
+                                                      ? Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               0.08,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.close,
-                                                            color: Colors
-                                                                .red.shade700,
-                                                          ),
-                                                          Icon(
-                                                            Icons.mode_edit,
-                                                            color:
-                                                                Colors.orange,
-                                                          )
-                                                        ],
-                                                      )),
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.close,
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade700,
+                                                              ),
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  prizeIndex =
+                                                                      index + 1;
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => AddPrize(
+                                                                                edit: "edit",
+                                                                                prizeModelObject: editData(),
+                                                                                contestsModel: contestDataEdit(prizeModel.contestId.toString()),
+                                                                                prizeModel: prizeListEdit(prizeModel.contestId.toString()),
+                                                                              )));
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .mode_edit,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ))
+                                                      : Text(""),
                                                 ],
                                               ),
                                             ),
@@ -330,14 +351,23 @@ class _PrizeScreenState extends State<PrizeScreen> {
     _contestList = contestsModelList.contestsModel;
   }
 
-  int maxEntriesPerUser;
-  int maxEntries;
-  int contestEntryAmount;
   ContestsModel contestData() {
     ContestsModel contestsModel = ContestsModel();
     _contestList.forEach((element) {
       if (int.parse(_contestId) == element.id) {
         contestsModel = element;
+        print("contestID is ${element.id}");
+      }
+    });
+    return contestsModel;
+  }
+
+  ContestsModel contestDataEdit(String contestId) {
+    ContestsModel contestsModel = ContestsModel();
+    _contestList.forEach((element) {
+      if (int.parse(contestId) == element.id) {
+        contestsModel = element;
+        print("contestID is ${element.id}");
       }
     });
     return contestsModel;
@@ -347,7 +377,18 @@ class _PrizeScreenState extends State<PrizeScreen> {
     List<PrizeModel> listPrize = List<PrizeModel>();
     prizeModelList.prizeModel.forEach((element) {
       if (int.parse(_contestId) == element.contestId) {
-        print("contest ${element.amount}");
+        print("contest amount ${element.amount}");
+        listPrize.add(element);
+      }
+    });
+    return listPrize;
+  }
+
+  List<PrizeModel> prizeListEdit(String contestId) {
+    List<PrizeModel> listPrize = List<PrizeModel>();
+    prizeModelList.prizeModel.forEach((element) {
+      if (int.parse(contestId) == element.contestId) {
+        print("contest amount ${element.amount}");
         listPrize.add(element);
       }
     });
@@ -478,6 +519,8 @@ class _PrizeScreenState extends State<PrizeScreen> {
         MaterialPageRoute(
             builder: (context) => AddPrize(
                   contestsModel: contestData(),
+                  edit: "add",
+                  prizeModelObject: editData(),
                   prizeModel: prizeList(),
                 )));
   }
@@ -495,6 +538,18 @@ class _PrizeScreenState extends State<PrizeScreen> {
         //maxLines: 2,
       ),
     );
+  }
+
+  int prizeIndex;
+  PrizeModel editData() {
+    PrizeModel prizeModel = PrizeModel();
+    prizeModelList.prizeModel.forEach((element) {
+      if (prizeIndex == element.id) {
+        prizeModel = element;
+        print("data is ${element.amount}");
+      }
+    });
+    return prizeModel;
   }
 
   Widget numbers(String name) {

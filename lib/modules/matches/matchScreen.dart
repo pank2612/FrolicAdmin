@@ -212,7 +212,8 @@ class _MatchScreenState extends State<MatchScreen> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  numbers("${index + 1}"),
+                                                  numbers(matchesModel.id
+                                                      .toString()),
                                                   normalText(getName(
                                                       matchesModel
                                                           .tournamentId)),
@@ -257,10 +258,26 @@ class _MatchScreenState extends State<MatchScreen> {
                                                             color: Colors
                                                                 .red.shade700,
                                                           ),
-                                                          Icon(
-                                                            Icons.mode_edit,
-                                                            color:
-                                                                Colors.orange,
+                                                          IconButton(
+                                                            onPressed: () {
+                                                              matchIndex =
+                                                                  index + 1;
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          AddMatches(
+                                                                            edit:
+                                                                                "edit",
+                                                                            matchesModel:
+                                                                                editData(),
+                                                                          )));
+                                                            },
+                                                            icon: Icon(
+                                                              Icons.mode_edit,
+                                                              color:
+                                                                  Colors.orange,
+                                                            ),
                                                           )
                                                         ],
                                                       )),
@@ -357,6 +374,18 @@ class _MatchScreenState extends State<MatchScreen> {
     );
   }
 
+  int matchIndex;
+  MatchesModel editData() {
+    MatchesModel matchesModel = MatchesModel();
+    matchesModelList.matchesModel.forEach((element) {
+      if (matchIndex == element.id) {
+        matchesModel = element;
+        print("data is ${element.description}");
+      }
+    });
+    return matchesModel;
+  }
+
   _addButton() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.20,
@@ -364,7 +393,12 @@ class _MatchScreenState extends State<MatchScreen> {
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddMatches()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddMatches(
+                        edit: "add",
+                        matchesModel: editData(),
+                      )));
         },
         height: 50,
         // elevation: 10,

@@ -26,6 +26,8 @@ Widget textField(
         suffixIcon: isIconShow ? image : null,
         labelText: labletext,
         hintText: hintText,
+        hintStyle: TextStyle(
+            color: Colors.black, fontWeight: FontWeight.w400, fontSize: 17),
         border: OutlineInputBorder(),
         fillColor: Colors.white,
         filled: true,

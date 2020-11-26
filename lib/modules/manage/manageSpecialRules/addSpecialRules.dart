@@ -10,6 +10,9 @@ import 'package:frolicsports/services/specialRulesServices.dart';
 import 'package:frolicsports/services/torunaments.dart';
 
 class AddSpecialRules extends StatefulWidget {
+  String edit;
+  SpecialRulesModel specialRulesModel;
+  AddSpecialRules({this.edit, this.specialRulesModel});
   @override
   _AddSpecialRulesState createState() => _AddSpecialRulesState();
 }
@@ -19,12 +22,10 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _shortCodeController = TextEditingController();
   TextEditingController _pointsController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
-  TextEditingController _maxPointsController = TextEditingController();
-  TextEditingController _playersController = TextEditingController();
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintText]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +44,7 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintText,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -168,7 +169,9 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
   Widget build(BuildContext context) {
     return new WillPopScope(
       onWillPop: () async => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => new ManageSpecialRulesScreen())),
+          context,
+          MaterialPageRoute(
+              builder: (context) => new ManageSpecialRulesScreen())),
       child: Scaffold(
         body: Padding(
           padding: EdgeInsets.all(10),
@@ -200,26 +203,52 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
                             name: "SELECT TOURNAMENT",
                             categories: _tournamentList,
                             selectedCategory: _tourName),
-                        textFieldWithText("Name", _nameController,
-                            ValidationKey.name, TextInputType.text)
+                        textFieldWithText(
+                            "Name",
+                            _nameController,
+                            ValidationKey.name,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.specialRulesModel.name
+                                : "")
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Short Code", _shortCodeController,
-                            ValidationKey.shortCode, TextInputType.text),
-                        textFieldWithText("Points", _pointsController,
-                            ValidationKey.maxPoints, TextInputType.number)
+                        textFieldWithText(
+                            "Short Code",
+                            _shortCodeController,
+                            ValidationKey.shortCode,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.specialRulesModel.shortName
+                                : ""),
+                        textFieldWithText(
+                            "Points",
+                            _pointsController,
+                            ValidationKey.maxPoints,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.specialRulesModel.points.toString()
+                                : "")
                       ],
                     ),
-                    RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text("Submit"),
-                      onPressed: () {
-                        _submit();
-                      },
-                    )
+                    widget.edit == "edit"
+                        ? RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("EDIT"),
+                            onPressed: () {
+                              _editRules();
+                            },
+                          )
+                        : RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("Submit"),
+                            onPressed: () {
+                              _submit();
+                            },
+                          )
                   ],
                 ),
               ),
@@ -228,6 +257,27 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
         ),
       ),
     );
+  }
+
+  _editRules() {
+    if (_formKey.currentState.validate()) {
+      SpecialRulesModel specialRulesModel = SpecialRulesModel(
+          id: widget.specialRulesModel.id,
+          name: _nameController.text == null
+              ? widget.specialRulesModel.name
+              : _nameController.text,
+          shortName: _shortCodeController.text == null
+              ? widget.specialRulesModel.shortName
+              : _shortCodeController.text,
+          tournamentId: int.parse(_tourName) == null
+              ? widget.specialRulesModel.tournamentId
+              : int.parse(_tourName),
+          points: int.parse(_pointsController.text) == null
+              ? widget.specialRulesModel.points
+              : int.parse(_pointsController.text));
+      getPostSpecialRules.editSpecialRules(
+          specialRulesModelObject: specialRulesModel);
+    }
   }
 
   List ruleName = [];

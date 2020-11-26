@@ -83,15 +83,16 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                             children: [
                               Container(
                                 padding: EdgeInsets.only(
-                                    left:
-                                        MediaQuery.of(context).size.width * 0.20),
+                                    left: MediaQuery.of(context).size.width *
+                                        0.20),
                                 child: Text("Search:",
                                     style: TextStyle(
                                       fontSize: 17,
                                     )),
                               ),
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.01,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.01,
                               ),
                               Row(
                                 children: [
@@ -101,14 +102,14 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                                         fontSize: 20, color: Colors.lightBlue),
                                   ),
                                   SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.112,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.112,
                                   ),
                                   Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.35,
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.05,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.35,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
                                     child: TextField(
                                         // controller: controller,
                                         style: TextStyle(
@@ -134,13 +135,14 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 2),
                               margin: EdgeInsets.only(
-                                  top:
-                                      MediaQuery.of(context).size.height * 0.115),
+                                  top: MediaQuery.of(context).size.height *
+                                      0.115),
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height * 0.08,
                               color: Colors.grey.shade300,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   numbers("#"),
                                   normalText("Tournament"),
@@ -161,7 +163,8 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                                       Container(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12, vertical: 2),
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         height:
                                             MediaQuery.of(context).size.height *
                                                 0.1,
@@ -169,13 +172,13 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            numbers("${index + 1}"),
-                                            normalText(
-                                                getName(teamsModel.tournamentId)),
+                                            numbers(teamsModel.id.toString()),
+                                            normalText(getName(
+                                                teamsModel.tournamentId)),
                                             normalText(
                                                 teamsModel.name.toString()),
-                                            normalText(
-                                                teamsModel.shortName.toString()),
+                                            normalText(teamsModel.shortName
+                                                .toString()),
                                             Container(
                                                 width: MediaQuery.of(context)
                                                         .size
@@ -193,48 +196,61 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
 //                                                            "logo is ${sportsModel.logo.length}");
                                                     if (snapShot
                                                             .connectionState ==
-                                                        ConnectionState.waiting) {
+                                                        ConnectionState
+                                                            .waiting) {
                                                       return Container(
                                                           alignment: Alignment
                                                               .centerLeft,
                                                           width: 120,
                                                           height: 120,
+                                                          // color: Colors.transparent,
                                                           child: CircleAvatar(
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .transparent,
                                                               child:
                                                                   CircularProgressIndicator()));
                                                     } else if (!snapShot
                                                         .hasData) {
                                                       return Container(
-                                                        alignment:
-                                                            Alignment.centerLeft,
+                                                        alignment: Alignment
+                                                            .centerLeft,
                                                         width: 200,
                                                         height: 200,
                                                         child: CircleAvatar(
                                                           radius: 30,
                                                           backgroundColor:
-                                                              Colors.transparent,
+                                                              Colors
+                                                                  .transparent,
                                                           child: CircleAvatar(
                                                             child: Image.network(
                                                                 "https://upload.wikimedia.org/wikipedia/commons"
-                                                                "/thumb/d/d1/Icons8_flat_businessman.svg/768px-Icons8_flat_businessman.svg.png"),
+                                                                "/thumb/d/d1/Icons8_flat_businessman.svg/768"
+                                                                "px-Icons8_flat_businessman.svg.png"),
                                                           ),
 //                                                              child: Image.network(
 //                                                                  snapShot.data
 //                                                                      .toString()),
                                                         ),
                                                       );
-                                                    } else if (snapShot.hasData) {
+                                                    } else if (snapShot
+                                                        .hasData) {
                                                       return Container(
-                                                        alignment:
-                                                            Alignment.centerLeft,
-                                                        width: 150,
-                                                        height: 150,
+                                                        width: 20,
+                                                        height: 60,
+                                                        alignment: Alignment
+                                                            .centerLeft,
                                                         child: CircleAvatar(
-                                                          radius: 30,
+                                                          radius: 35,
+                                                          backgroundColor:
+                                                              Colors
+                                                                  .transparent,
                                                           child: Image.network(
                                                             snapShot.data
                                                                 .toString(),
-                                                            fit: BoxFit.contain,
+                                                            fit: BoxFit.fill,
+//                                                          height: 100,
+//                                                          width: 100,
                                                           ),
                                                         ),
                                                       );
@@ -242,23 +258,43 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                                                     return null;
                                                   },
                                                 )),
-                                            Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.08,
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.close,
-                                                      color: Colors.red.shade700,
-                                                    ),
-                                                    Icon(
-                                                      Icons.mode_edit,
-                                                      color: Colors.orange,
-                                                    )
-                                                  ],
-                                                )),
+                                            USER_TYPE == "admin"
+                                                ? Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.08,
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.close,
+                                                          color: Colors
+                                                              .red.shade700,
+                                                        ),
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            teamIndex =
+                                                                index + 1;
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            AddTeams(
+                                                                              teamsModel: editData(),
+                                                                              edit: "edit",
+                                                                            )));
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.mode_edit,
+                                                            color:
+                                                                Colors.orange,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ))
+                                                : Text(""),
                                           ],
                                         ),
                                       ),
@@ -276,7 +312,8 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("Showing 0 to 0 of 0 entries"),
                                   Row(
@@ -349,6 +386,18 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
     );
   }
 
+  int teamIndex;
+  TeamsModel editData() {
+    TeamsModel teamsModel = TeamsModel();
+    teamsModelList.teamsModel.forEach((element) {
+      if (teamIndex == element.id) {
+        teamsModel = element;
+        print("data is ${element.name}");
+      }
+    });
+    return teamsModel;
+  }
+
   Widget normalText(String name) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.08,
@@ -385,7 +434,12 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddTeams()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddTeams(
+                        edit: "add",
+                        teamsModel: editData(),
+                      )));
         },
         height: 50,
         // elevation: 10,

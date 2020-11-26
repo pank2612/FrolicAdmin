@@ -121,7 +121,21 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: _drawer(),
       appBar: AppBar(),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Center(
+            child: Container(
+              height: 200,
+              width: 200,
+              child: image == null
+                  ? Text(
+                      "No Image",
+                      style: TextStyle(fontSize: 50),
+                    )
+                  : image,
+            ),
+          )
 //          BasicDateTimeField(),
 //          BasicDateTimeField(),
 //          BasicDateField(),

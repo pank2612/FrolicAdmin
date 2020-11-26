@@ -17,6 +17,9 @@ import 'package:firebase/firebase.dart' as fb;
 import 'managePlayer.dart';
 
 class AddPlayer extends StatefulWidget {
+  String edit;
+  PlayersModel playersModel;
+  AddPlayer({this.edit, this.playersModel});
   @override
   _AddPlayerState createState() => _AddPlayerState();
 }
@@ -27,7 +30,7 @@ class _AddPlayerState extends State<AddPlayer> {
   TextEditingController _nickNameController = TextEditingController();
   TextEditingController _creditController = TextEditingController();
   TextEditingController _pointsController = TextEditingController();
-  Widget textFieldWithImage(String name) {
+  Widget textFieldWithImage(String name, String choose) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +72,7 @@ class _AddPlayerState extends State<AddPlayer> {
               ),
               Padding(
                 child: imageText == null
-                    ? Text("No file chosen")
+                    ? Text(choose)
                     : Text(imageText.toString()),
                 padding: EdgeInsets.zero,
               )
@@ -81,7 +84,9 @@ class _AddPlayerState extends State<AddPlayer> {
   }
 
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintText]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +105,7 @@ class _AddPlayerState extends State<AddPlayer> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintText,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -430,15 +435,27 @@ class _AddPlayerState extends State<AddPlayer> {
                             selectedCategory: _team,
                             name: "Select Team",
                             categories: _teamList),
-                        textFieldWithText("Name", _nameController,
-                            ValidationKey.name, TextInputType.text)
+                        textFieldWithText(
+                            "Name",
+                            _nameController,
+                            ValidationKey.name,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.playersModel.name.toString()
+                                : "")
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Nick Name", _nickNameController,
-                            ValidationKey.name, TextInputType.text),
+                        textFieldWithText(
+                            "Nick Name",
+                            _nickNameController,
+                            ValidationKey.name,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.playersModel.shortName.toString()
+                                : ""),
                         dropDownSkills(
                             categories: _skillsList,
                             name: "Select Skill",
@@ -448,16 +465,32 @@ class _AddPlayerState extends State<AddPlayer> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Credit", _creditController,
-                            ValidationKey.credit, TextInputType.text),
-                        textFieldWithImage("Upload Image")
+                        textFieldWithText(
+                            "Credit",
+                            _creditController,
+                            ValidationKey.credit,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.playersModel.credits.toString()
+                                : ""),
+                        textFieldWithImage(
+                            "Upload Image",
+                            widget.edit == "edit"
+                                ? widget.playersModel.picture
+                                : "No choose file")
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Points", _pointsController,
-                            ValidationKey.maxPoints, TextInputType.text),
+                        textFieldWithText(
+                            "Points",
+                            _pointsController,
+                            ValidationKey.maxPoints,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.playersModel.points.toString()
+                                : ""),
                         dropDownCountries(
                             selectedCategory: _country,
                             categories: _tournamentList,
@@ -492,13 +525,21 @@ class _AddPlayerState extends State<AddPlayer> {
                         ),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 0.05),
-                        RaisedButton(
-                          onPressed: () {
-                            _submit();
-                          },
-                          color: Colors.lightBlue,
-                          child: Text("Submit"),
-                        )
+                        widget.edit == "edit"
+                            ? RaisedButton(
+                                onPressed: () {
+                                  _editPlayer();
+                                },
+                                color: Colors.lightBlue,
+                                child: Text("EDIT"),
+                              )
+                            : RaisedButton(
+                                onPressed: () {
+                                  _submit();
+                                },
+                                color: Colors.lightBlue,
+                                child: Text("Submit"),
+                              )
                       ],
                     )
                   ],
@@ -509,6 +550,38 @@ class _AddPlayerState extends State<AddPlayer> {
         ),
       ),
     );
+  }
+
+  _editPlayer() {
+    if (_formKey.currentState.validate()) {
+      PlayersModel playersModel = PlayersModel(
+          name: _nameController.text == null
+              ? widget.playersModel.name
+              : _nameController.text,
+          country: _country,
+          teamId: int.parse(_team) == null
+              ? widget.playersModel.teamId
+              : int.parse(_team),
+          skillsId: int.parse(_skill) == null
+              ? widget.playersModel.skillsId
+              : int.parse(_skill),
+          credits: int.parse(_creditController.text) == null
+              ? widget.playersModel.credits
+              : int.parse(_creditController.text),
+          picture: imageText == null ? widget.playersModel.picture : imageText,
+          points: int.parse(_pointsController.text) == null
+              ? widget.playersModel.points
+              : int.parse(_pointsController.text),
+          shortName: _nickNameController.text == null
+              ? widget.playersModel.shortName
+              : _nickNameController.text,
+          isPlaying:
+              isEnabled == null ? widget.playersModel.isPlaying : isEnabled,
+          status: isStatus == null ? widget.playersModel.status : isStatus,
+          id: widget.playersModel.id);
+      getPostPlayers.editPlayers(playersModelObject: playersModel);
+      uploadImageToFirebaseStorage();
+    }
   }
 
   bool isSwitched = false;

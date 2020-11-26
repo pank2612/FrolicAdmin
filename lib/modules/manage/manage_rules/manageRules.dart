@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/rulesModel.dart';
 import 'package:frolicsports/models/tournamentModel.dart';
 import 'package:frolicsports/modules/manage/manage_rules/addRules.dart';
@@ -82,15 +83,16 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
                             children: [
                               Container(
                                 padding: EdgeInsets.only(
-                                    left:
-                                        MediaQuery.of(context).size.width * 0.20),
+                                    left: MediaQuery.of(context).size.width *
+                                        0.20),
                                 child: Text("Search:",
                                     style: TextStyle(
                                       fontSize: 17,
                                     )),
                               ),
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.01,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.01,
                               ),
                               Row(
                                 children: [
@@ -100,14 +102,14 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
                                         fontSize: 20, color: Colors.lightBlue),
                                   ),
                                   SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.112,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.112,
                                   ),
                                   Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.35,
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.05,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.35,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
                                     child: TextField(
                                         // controller: controller,
                                         style: TextStyle(
@@ -133,13 +135,14 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 2),
                               margin: EdgeInsets.only(
-                                  top:
-                                      MediaQuery.of(context).size.height * 0.115),
+                                  top: MediaQuery.of(context).size.height *
+                                      0.115),
                               width: MediaQuery.of(context).size.width,
                               height: MediaQuery.of(context).size.height * 0.08,
                               color: Colors.grey.shade300,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   numbers("#"),
                                   normalText("Tournament"),
@@ -160,7 +163,8 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
                                       Container(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 12, vertical: 2),
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         height:
                                             MediaQuery.of(context).size.height *
                                                 0.1,
@@ -168,32 +172,52 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            numbers("${index + 1}"),
-                                            normalText(
-                                                getName(rulesModel.tournamentId)),
+                                            numbers(rulesModel.id.toString()),
+                                            normalText(getName(
+                                                rulesModel.tournamentId)),
                                             normalText(
                                                 rulesModel.name.toString()),
-                                            normalText(
-                                                rulesModel.shortName.toString()),
+                                            normalText(rulesModel.shortName
+                                                .toString()),
                                             normalText(
                                                 rulesModel.points.toString()),
-                                            Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.08,
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.close,
-                                                      color: Colors.red.shade700,
-                                                    ),
-                                                    Icon(
-                                                      Icons.mode_edit,
-                                                      color: Colors.orange,
-                                                    )
-                                                  ],
-                                                )),
+                                            USER_TYPE == "admin"
+                                                ? Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.08,
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.close,
+                                                          color: Colors
+                                                              .red.shade700,
+                                                        ),
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            rulesIndex =
+                                                                index + 1;
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            AddRules(
+                                                                              edit: "edit",
+                                                                              rulesModel: editData(),
+                                                                            )));
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.mode_edit,
+                                                            color:
+                                                                Colors.orange,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ))
+                                                : Text(""),
                                           ],
                                         ),
                                       ),
@@ -211,7 +235,8 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("Showing 0 to 0 of 0 entries"),
                                   Row(
@@ -313,6 +338,18 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
     );
   }
 
+  int rulesIndex;
+  RulesModel editData() {
+    RulesModel rulesModel = RulesModel();
+    rulesModelList.rulesModel.forEach((element) {
+      if (rulesIndex == element.id) {
+        rulesModel = element;
+        print("data is ${element.name}");
+      }
+    });
+    return rulesModel;
+  }
+
   Widget _addButton() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.20,
@@ -320,7 +357,10 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
         // minWidth: MediaQuery.of(context).size.width * 0.10,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddRules()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      AddRules(edit: "add", rulesModel: editData())));
         },
         height: 50,
         // elevation: 10,

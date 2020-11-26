@@ -8,6 +8,9 @@ import 'package:frolicsports/services/rulesServices.dart';
 import 'package:frolicsports/services/torunaments.dart';
 
 class AddRules extends StatefulWidget {
+  String edit;
+  RulesModel rulesModel;
+  AddRules({this.edit, this.rulesModel});
   @override
   _AddRulesState createState() => _AddRulesState();
 }
@@ -17,12 +20,10 @@ class _AddRulesState extends State<AddRules> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _shortCodeController = TextEditingController();
   TextEditingController _pointsController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
-  TextEditingController _maxPointsController = TextEditingController();
-  TextEditingController _playersController = TextEditingController();
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintText]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +42,7 @@ class _AddRulesState extends State<AddRules> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintText,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -164,8 +165,8 @@ class _AddRulesState extends State<AddRules> {
   @override
   Widget build(BuildContext context) {
     return new WillPopScope(
-      onWillPop: () async => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => new ManageRulesScreen())),
+      onWillPop: () async => Navigator.push(context,
+          MaterialPageRoute(builder: (context) => new ManageRulesScreen())),
       child: Scaffold(
         body: Padding(
           padding: EdgeInsets.all(10),
@@ -197,26 +198,50 @@ class _AddRulesState extends State<AddRules> {
                             name: "SELECT TOURNAMENT",
                             selectedCategory: _tourName,
                             categories: _tournamentList),
-                        textFieldWithText("Name", _nameController,
-                            ValidationKey.name, TextInputType.text)
+                        textFieldWithText(
+                            "Name",
+                            _nameController,
+                            ValidationKey.name,
+                            TextInputType.text,
+                            widget.edit == "edit" ? widget.rulesModel.name : "")
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Short Code", _shortCodeController,
-                            ValidationKey.shortCode, TextInputType.text),
-                        textFieldWithText("Points", _pointsController,
-                            ValidationKey.maxPoints, TextInputType.number)
+                        textFieldWithText(
+                            "Short Code",
+                            _shortCodeController,
+                            ValidationKey.shortCode,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.rulesModel.shortName
+                                : ""),
+                        textFieldWithText(
+                            "Points",
+                            _pointsController,
+                            ValidationKey.maxPoints,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.rulesModel.points.toString()
+                                : "")
                       ],
                     ),
-                    RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text("Submit"),
-                      onPressed: () {
-                        _submit();
-                      },
-                    )
+                    widget.edit == "edit"
+                        ? RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("EDIT"),
+                            onPressed: () {
+                              _editRules();
+                            },
+                          )
+                        : RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("Submit"),
+                            onPressed: () {
+                              _submit();
+                            },
+                          )
                   ],
                 ),
               ),
@@ -236,6 +261,26 @@ class _AddRulesState extends State<AddRules> {
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 2)
           : valid();
+    }
+  }
+
+  _editRules() {
+    if (_formKey.currentState.validate()) {
+      RulesModel rulesModel = RulesModel(
+          id: widget.rulesModel.id,
+          name: _nameController.text == null
+              ? widget.rulesModel.name
+              : _nameController.text,
+          shortName: _shortCodeController.text == null
+              ? widget.rulesModel.shortName
+              : _shortCodeController.text,
+          tournamentId: int.parse(_tourName) == null
+              ? widget.rulesModel.tournamentId
+              : int.parse(_tourName),
+          points: int.parse(_pointsController.text) == null
+              ? widget.rulesModel.points
+              : int.parse(_pointsController.text));
+      getPostRules.editRules(rulesModelObject: rulesModel);
     }
   }
 

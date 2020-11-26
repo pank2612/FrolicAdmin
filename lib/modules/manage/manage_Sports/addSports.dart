@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +12,9 @@ import 'package:firebase/firebase.dart' as fb;
 import 'dart:html';
 
 class AddSports extends StatefulWidget {
+  String edit;
+  SportsModel sportsModel;
+  AddSports({this.edit, this.sportsModel});
   @override
   _AddSportsState createState() => _AddSportsState();
 }
@@ -19,13 +23,10 @@ class _AddSportsState extends State<AddSports> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _shortCodeController = TextEditingController();
-  TextEditingController _logoController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
-  TextEditingController _endDateController = TextEditingController();
-  TextEditingController _maxPointsController = TextEditingController();
-  TextEditingController _playersController = TextEditingController();
   Widget textFieldWithText(String name, TextEditingController controller,
-      [ValidationKey inputValidate, TextInputType keyboardType]) {
+      [ValidationKey inputValidate,
+      TextInputType keyboardType,
+      String hintText]) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,7 +45,7 @@ class _AddSportsState extends State<AddSports> {
           width: MediaQuery.of(context).size.width * 0.45,
           child: textField(
               isIconShow: false,
-              // hintText: name,
+              hintText: hintText,
               controller: controller,
               keyboardType: keyboardType,
               inputValidate: inputValidate,
@@ -56,7 +57,7 @@ class _AddSportsState extends State<AddSports> {
   }
 
   String imageText;
-  Widget textFieldWithImage(String name) {
+  Widget textFieldWithImage(String name, String choose) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +99,7 @@ class _AddSportsState extends State<AddSports> {
               ),
               Padding(
                 child: imageText == null
-                    ? Text("No file chosen")
+                    ? Text(choose)
                     : Text(imageText.toString()),
                 padding: EdgeInsets.zero,
               )
@@ -178,13 +179,18 @@ class _AddSportsState extends State<AddSports> {
     // TODO: implement initState
     super.initState();
     getSportsData();
+    _nameController = TextEditingController(text: widget.sportsModel.name);
+    _shortCodeController =
+        TextEditingController(text: widget.sportsModel.shortCode);
+
+    print(widget.sportsModel.name);
   }
 
   @override
   Widget build(BuildContext context) {
     return new WillPopScope(
-      onWillPop: () async => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => new ManageSportsScreen())),
+      onWillPop: () async => Navigator.push(context,
+          MaterialPageRoute(builder: (context) => new ManageSportsScreen())),
       child: Scaffold(
         body: Padding(
           padding: EdgeInsets.only(
@@ -216,27 +222,51 @@ class _AddSportsState extends State<AddSports> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithText("Name", _nameController,
-                            ValidationKey.name, TextInputType.text),
-                        textFieldWithText("Short Code", _shortCodeController,
-                            ValidationKey.shortCode, TextInputType.text),
+                        textFieldWithText(
+                            "Name",
+                            _nameController,
+                            ValidationKey.name,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.sportsModel.name
+                                : ""),
+                        textFieldWithText(
+                            "Short Code",
+                            _shortCodeController,
+                            ValidationKey.shortCode,
+                            TextInputType.text,
+                            widget.edit == "edit"
+                                ? widget.sportsModel.shortCode
+                                : ""),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        textFieldWithImage("LOGO"),
+                        textFieldWithImage(
+                            "LOGO",
+                            widget.edit == "edit"
+                                ? widget.sportsModel.logo
+                                : "No Choose file"),
 //                      textFieldWithText("Short Code", _shortCodeController,
 //                          ValidationKey.shortCode, TextInputType.text),
                       ],
                     ),
-                    RaisedButton(
-                      color: Colors.lightBlue,
-                      child: Text("Submit"),
-                      onPressed: () {
-                        _submit();
-                      },
-                    )
+                    widget.edit == "edit"
+                        ? RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("Edit"),
+                            onPressed: () {
+                              _editSports();
+                            },
+                          )
+                        : RaisedButton(
+                            color: Colors.lightBlue,
+                            child: Text("Submit"),
+                            onPressed: () {
+                              _submit();
+                            },
+                          )
                   ],
                 ),
               ),
@@ -245,6 +275,26 @@ class _AddSportsState extends State<AddSports> {
         ),
       ),
     );
+  }
+
+  _editSports() async {
+    if (_formKey.currentState.validate()) {
+      SportsModel sportsModel = SportsModel(
+          id: widget.sportsModel.id,
+          name:
+//          _nameController.text == null
+//              ? widget.sportsModel.name
+//              :
+              _nameController.text,
+          logo: imageText == null ? widget.sportsModel.logo : imageText,
+          shortCode:
+//          _shortCodeController.text == null
+//              ? widget.sportsModel.shortCode
+//              :
+              _shortCodeController.text);
+      await getSports.editSports(sportsModelObject: sportsModel);
+      uploadImageToFirebaseStorage();
+    }
   }
 
   List sportName = [];
