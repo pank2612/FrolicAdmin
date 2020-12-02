@@ -38,9 +38,9 @@ class _ManageSpecialRulesScreenState extends State<ManageSpecialRulesScreen> {
   GetPostTournaments getPostTournaments = GetPostTournaments();
   getTournamentData() async {
     tournamentModelList = await getPostTournaments.getTournaments();
-//    setState(() {
-//      _loading = false;
-//    });
+    setState(() {
+      _loading = false;
+    });
   }
 
   String getName(int Id) {

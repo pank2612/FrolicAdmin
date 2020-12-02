@@ -65,6 +65,19 @@ class _AddPrizeState extends State<AddPrize> {
     super.initState();
     flag = 0;
     _loading = true;
+//    widget.prizeModel.forEach((element) {
+////      if (element.amount != 0 && element.amount != null)
+//      if (widget.edit == "edit") {
+//        _amountController =
+//            TextEditingController(text: element.amount.toString());
+//        _rankRangeStartController =
+//            TextEditingController(text: element.rankRangeStart.toString());
+//        _rankRangeEndController =
+//            TextEditingController(text: "${element.rankRangeEnd.toString()}");
+//      }
+//    });
+
+    getContestsData();
   }
 
   GetPostPrize getPostPrize = GetPostPrize();
@@ -75,10 +88,13 @@ class _AddPrizeState extends State<AddPrize> {
         status: isEnabled,
         amount: int.parse(_amountController.text),
         contestId: widget.contestsModel.id);
+
     getPostPrize.postPrize(
       prizeModelObject: prizeModel,
     );
-    showSnakBar();
+    showDialog(
+        "Added Successfully  :   ${_rankRangeStartController.text + "  -  " + _rankRangeEndController.text + "  :  " + _amountController.text}");
+    //showSnakBar();
 //    showDialog(
 //        "Added Successfully :- ${int.parse(_rankRangeStartController.text).toString() + " - " + int.parse(_rankRangeEndController.text).toString() + " : " + int.parse(_amountController.text).toString()}");
   }
@@ -103,7 +119,7 @@ class _AddPrizeState extends State<AddPrize> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "ADD PRIZE",
+                      widget.edit == "edit" ? "EDIT PRIZE" : "ADD PRIZE",
                       style: TextStyle(
                         color: Colors.lightBlue,
                         fontSize: 20,
@@ -124,34 +140,38 @@ class _AddPrizeState extends State<AddPrize> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           textFieldWithText(
-                              "Entry Amount",
-                              _amountController,
-                              ValidationKey.entryAmount,
-                              TextInputType.number,
-                              widget.edit == "edit"
-                                  ? widget.prizeModelObject.amount.toString()
-                                  : ""),
-                          textFieldWithText(
                               "Rank Range Start",
                               _rankRangeStartController,
                               ValidationKey.rankRangeStart,
                               TextInputType.text,
                               widget.edit == "edit"
-                                  ? widget.prizeModelObject.rankRangeStart
-                                      .toString()
+                                  ? prizeModel.rankRangeStart.toString() == null
+                                      ? ""
+                                      : prizeModel.rankRangeStart.toString()
+                                  : ""),
+                          textFieldWithText(
+                              "Rank Range End",
+                              _rankRangeEndController,
+                              ValidationKey.rankRangeStart,
+                              TextInputType.text,
+                              widget.edit == "edit"
+                                  ? prizeModel.rankRangeEnd.toString() == null
+                                      ? ""
+                                      : prizeModel.rankRangeEnd.toString()
                                   : ""),
                         ]),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         textFieldWithText(
-                            "Rank Range End",
-                            _rankRangeEndController,
-                            ValidationKey.rankRangeStart,
-                            TextInputType.text,
+                            "Entry Amount",
+                            _amountController,
+                            ValidationKey.entryAmount,
+                            TextInputType.number,
                             widget.edit == "edit"
-                                ? widget.prizeModelObject.rankRangeEnd
-                                    .toString()
+                                ? prizeModel.amount.toString() == null
+                                    ? ""
+                                    : prizeModel.amount.toString()
                                 : ""),
                         Text(
                           '$textValue',
@@ -184,6 +204,281 @@ class _AddPrizeState extends State<AddPrize> {
                               )
                       ],
                     ),
+                    Expanded(
+                      child: Card(
+                          elevation: 5,
+                          //color: Colors.grey,
+                          child: Stack(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(12),
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.only(
+                                          left: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.20),
+                                      child: Text("Search:",
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                          )),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.01,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          "PRIZE",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.lightBlue),
+                                        ),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.112,
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.35,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.05,
+                                          child: TextField(
+                                              // controller: controller,
+                                              style: TextStyle(
+                                                fontSize: 15.0,
+                                                color: Colors.black,
+                                              ),
+                                              decoration: InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                fillColor: Colors.white,
+                                                filled: true,
+                                              )),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 2),
+                                    margin: EdgeInsets.only(
+                                        top:
+                                            MediaQuery.of(context).size.height *
+                                                0.115),
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.08,
+                                    color: Colors.grey.shade300,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        numbers("#"),
+                                        normalText("ContestName"),
+                                        normalText("RankRangeStart"),
+                                        normalText("RankRangeEnd"),
+                                        normalText("Amount"),
+                                        normalText("Status"),
+                                        USER_TYPE == "admin" &&
+                                                widget.edit == "edit"
+                                            ? normalText("Action")
+                                            : Text(""),
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: _loading == true
+                                        ? Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : ListView.builder(
+                                            itemBuilder: (context, index) {
+                                              PrizeModel prizeModel =
+                                                  PrizeModel();
+                                              prizeModel =
+                                                  widget.prizeModel[index];
+                                              return Column(
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 2),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.1,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        numbers("${index + 1}"),
+                                                        normalText(getName(
+                                                            prizeModel
+                                                                .contestId)),
+                                                        normalText(prizeModel
+                                                            .rankRangeStart
+                                                            .toString()),
+                                                        normalText(prizeModel
+                                                            .rankRangeEnd
+                                                            .toString()),
+                                                        normalText(prizeModel
+                                                            .amount
+                                                            .toString()),
+                                                        normalText(prizeModel
+                                                            .status
+                                                            .toString()),
+                                                        USER_TYPE == "admin" &&
+                                                                widget.edit ==
+                                                                    "edit"
+                                                            ? Container(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.08,
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                      Icons
+                                                                          .close,
+                                                                      color: Colors
+                                                                          .red
+                                                                          .shade700,
+                                                                    ),
+                                                                    IconButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        prizeIndex =
+                                                                            prizeModel;
+                                                                        setState(
+                                                                            () {
+                                                                          editTextFields();
+                                                                        });
+                                                                      },
+                                                                      icon:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .mode_edit,
+                                                                        color: Colors
+                                                                            .orange,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ))
+                                                            : Text(""),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Divider(
+                                                    thickness: 1,
+                                                  )
+                                                ],
+                                              );
+                                            },
+                                            itemCount: widget.prizeModel == null
+                                                ? 0
+                                                : widget.prizeModel.length,
+                                          ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("Showing 1 to 3 of 3 entries"),
+                                        Row(
+                                          children: [
+                                            MaterialButton(
+                                              onPressed: () {},
+                                              color: Colors.lightBlue,
+                                              child: Text(
+                                                "Previous",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                            MaterialButton(
+                                              onPressed: () {},
+                                              color: Colors.lightBlue,
+                                              child: Text(
+                                                "1",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                            MaterialButton(
+                                              color: Colors.lightBlue,
+                                              onPressed: () {},
+                                              child: Text(
+                                                "Next",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    RaisedButton(
+                                      color: Colors.lightBlue,
+                                      child: Text(
+                                        "COPY",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      onPressed: () {},
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    RaisedButton(
+                                      color: Colors.lightBlue,
+                                      child: Text(
+                                        "EXCEL",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      onPressed: () {},
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          )),
+                    )
                   ],
                 ),
               ),
@@ -194,8 +489,18 @@ class _AddPrizeState extends State<AddPrize> {
     );
   }
 
-  bool isSwitched = false;
-  int isEnabled = 0;
+  PrizeModel prizeModel = PrizeModel();
+  editTextFields() {
+    widget.prizeModel.forEach((element) {
+      if (prizeIndex == element) {
+        prizeModel = element;
+      }
+    });
+  }
+
+  PrizeModel prizeIndex;
+  bool isSwitched = true;
+  int isEnabled = 1;
   var textValue = 'Status';
   void toggleSwitch(bool value) {
     if (isSwitched == false) {
@@ -218,8 +523,6 @@ class _AddPrizeState extends State<AddPrize> {
   _submit() async {
     int startRange = int.parse(_rankRangeStartController.text);
     int endRange = int.parse(_rankRangeEndController.text);
-    print(startRange.toString());
-    print(endRange.toString());
     int prizeAmount = int.parse(_amountController.text);
     if (_formKey.currentState.validate()) {
       if (startRange == 0 || endRange == 0) {
@@ -248,8 +551,6 @@ class _AddPrizeState extends State<AddPrize> {
           tempMap[k] = widget.prizeModel[i].amount;
         }
       }
-      print(submittedAmount);
-      print(tempMap);
       for (int k = startRange; k <= endRange; k++) {
         if (tempMap[k] != 0) {
           showDialog("Rank Entry Already Submitted");
@@ -261,8 +562,11 @@ class _AddPrizeState extends State<AddPrize> {
         showDialog("max amount threshold exceeds");
         return;
       }
-      postPrizeData();
+      setState(() {
+        postPrizeData();
+      });
       PrizeModel _prizeModel = PrizeModel(
+          status: isEnabled,
           amount: prizeAmount,
           rankRangeEnd: endRange,
           rankRangeStart: startRange,
@@ -274,16 +578,15 @@ class _AddPrizeState extends State<AddPrize> {
   editData() {
     int startRange = int.parse(_rankRangeStartController.text);
     int endRange = int.parse(_rankRangeEndController.text);
-    print(startRange.toString());
-    print(endRange.toString());
     int prizeAmount = int.parse(_amountController.text);
     if (_formKey.currentState.validate()) {
-      widget.prizeModel.forEach((prize) {
-        if (widget.prizeModelObject.id == prize.id) {
-          showDialog("Same id");
-          return;
-        }
-      });
+//      widget.prizeModel.forEach((prize) {
+//        if (widget.prizeModelObject.id == prize.id) {
+//          showDialog("Same id");
+//          return;
+//        }
+//      });
+
       if (startRange == 0 || endRange == 0) {
         showDialog("Start and End rank range can't be Zero");
         return;
@@ -300,18 +603,19 @@ class _AddPrizeState extends State<AddPrize> {
 
       int submittedAmount = 0;
       for (int i = 0; i < widget.prizeModel.length; i++) {
-        submittedAmount += ((widget.prizeModel[i].rankRangeEnd -
-                widget.prizeModel[i].rankRangeStart +
-                1) *
-            widget.prizeModel[i].amount);
-        for (int k = widget.prizeModel[i].rankRangeStart;
-            k <= widget.prizeModel[i].rankRangeEnd;
-            k++) {
-          tempMap[k] = widget.prizeModel[i].amount;
+        if (widget.prizeModel[i].id != prizeIndex.id) {
+          submittedAmount += ((widget.prizeModel[i].rankRangeEnd -
+                  widget.prizeModel[i].rankRangeStart +
+                  1) *
+              widget.prizeModel[i].amount);
+
+          for (int k = widget.prizeModel[i].rankRangeStart;
+              k <= widget.prizeModel[i].rankRangeEnd;
+              k++) {
+            tempMap[k] = widget.prizeModel[i].amount;
+          }
         }
       }
-      print(submittedAmount);
-      print(tempMap);
       for (int k = startRange; k <= endRange; k++) {
         if (tempMap[k] != 0) {
           showDialog("Rank Entry Already Submitted");
@@ -323,12 +627,17 @@ class _AddPrizeState extends State<AddPrize> {
         showDialog("max amount threshold exceeds");
         return;
       }
-      editPrizeData();
+      setState(() {
+        editPrizeData();
+      });
       PrizeModel _prizeModel = PrizeModel(
+          id: prizeIndex.id,
+          status: isEnabled,
           amount: prizeAmount,
           rankRangeEnd: endRange,
           rankRangeStart: startRange,
           contestId: widget.contestsModel.id);
+      widget.prizeModel.remove(prizeIndex);
       widget.prizeModel.add(_prizeModel);
     }
   }
@@ -348,11 +657,13 @@ class _AddPrizeState extends State<AddPrize> {
         contestId: widget.contestsModel.id == null
             ? widget.prizeModelObject.contestId
             : widget.contestsModel.id,
-        id: widget.prizeModelObject.id);
-    getPostPrize.postPrize(
+        id: prizeIndex.id);
+    getPostPrize.editPrize(
       prizeModelObject: prizeModel,
     );
-    showSnakBar();
+    showDialog(
+        "Edit Successfully  :   ${_rankRangeStartController.text + "  -  " + _rankRangeEndController.text + "  :  " + _amountController.text}");
+    // showSnakBar();
   }
 
   void showDialog(String name) {
@@ -416,5 +727,55 @@ class _AddPrizeState extends State<AddPrize> {
         ),
       ),
     ));
+  }
+
+  Widget normalText(String name) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.0755,
+      child: Text(
+        name,
+        style: TextStyle(
+          color: Colors.grey.shade700,
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+        ),
+        //maxLines: 2,
+      ),
+    );
+  }
+
+  Widget numbers(String name) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.02,
+      child: Text(
+        name,
+        style: TextStyle(
+          color: Colors.grey.shade700,
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+    );
+  }
+
+  ContestsModelList contestsModelList = ContestsModelList();
+  GetPostContest getContest = GetPostContest();
+  getContestsData() async {
+    contestsModelList = await getContest.getContests();
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  String getName(int Id) {
+    String contestName = "";
+
+    contestsModelList.contestsModel.forEach((contest) {
+      if (contest.id == Id) {
+        //matchName = match.name;
+        contestName = contest.name;
+      }
+    });
+    return contestName;
   }
 }

@@ -85,8 +85,12 @@ class TournamentModel {
         "sportsId": sportsId,
         "name": name,
         "description": description,
-        "startDate": startDate == null ? null : startDate.toIso8601String(),
-        "endDate": endDate == null ? null : endDate.toIso8601String(),
+        "startDate": startDate == null
+            ? null
+            : startDate.toIso8601String().replaceAll("Z", ""),
+        "endDate": endDate == null
+            ? null
+            : endDate.toIso8601String().replaceAll("Z", ""),
         "logo": logo,
         "maxPoints": maxPoints,
         "maxPlayers": maxPlayers,

@@ -9,7 +9,6 @@ import 'package:frolicsports/modules/tournament/add_tournament.dart';
 import 'package:frolicsports/screens/homeScreen.dart';
 import 'package:frolicsports/services/getSports.dart';
 import 'package:frolicsports/services/torunaments.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:firebase/firebase.dart' as fb;
 
 class TournamentScreen extends StatefulWidget {
@@ -516,11 +515,16 @@ class _TournamentScreenState extends State<TournamentScreen> {
 
   int tourIndex;
   TournamentModel editData() {
+    String previousStartDate;
     TournamentModel tournamentModel = TournamentModel();
     tournamentModelList.tournamentModel.forEach((element) {
       if (tourIndex == element.id) {
+        previousStartDate = element.startDate.toString();
+        previousStartDate.replaceAll(RegExp(r'[Z]'), '');
+        print(
+            "start date3 is ${previousStartDate.replaceAll(RegExp(r'[Z]'), '')}");
         tournamentModel = element;
-        print("data is ${element.name}");
+        // print("data is ${element.name}");
       }
     });
     return tournamentModel;

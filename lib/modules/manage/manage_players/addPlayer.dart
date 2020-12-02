@@ -30,6 +30,7 @@ class _AddPlayerState extends State<AddPlayer> {
   TextEditingController _nickNameController = TextEditingController();
   TextEditingController _creditController = TextEditingController();
   TextEditingController _pointsController = TextEditingController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   Widget textFieldWithImage(String name, String choose) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -180,9 +181,7 @@ class _AddPlayerState extends State<AddPlayer> {
   }
 
   dropDownCountries(
-      {List<TournamentModel> categories,
-      String selectedCategory,
-      String name}) {
+      {List<String> categories, String selectedCategory, String name}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,11 +218,11 @@ class _AddPlayerState extends State<AddPlayer> {
                             'SELECT COUNTRY',
                             style: TextStyle(fontSize: 16, color: Colors.black),
                           ),
-                          items: _tournamentList.map((tour) {
+                          items: countryList.map((country) {
                             return new DropdownMenuItem(
-                                value: tour.country.toString(),
+                                value: country.toString(),
                                 child: Text(
-                                  tour.country.toString(),
+                                  country.toString(),
                                   style: TextStyle(color: Colors.black),
                                 ));
                           }).toList(),
@@ -311,7 +310,15 @@ class _AddPlayerState extends State<AddPlayer> {
   String _country;
   String _team;
   bool _loading;
-
+  List<String> countryList = [
+    "India",
+    "Pakistan",
+    "Australia",
+    "England",
+    "WestIndies",
+    "South Affrica",
+    "Bangladesh"
+  ];
   GetPostPlayers getPostPlayers = GetPostPlayers();
   postPlayersData() async {
     PlayersModel playersModel = PlayersModel();
@@ -393,6 +400,15 @@ class _AddPlayerState extends State<AddPlayer> {
     // TODO: implement initState
     super.initState();
     _loading = true;
+    if (widget.playersModel.name != "" && widget.playersModel.name != null) {
+      _nameController = TextEditingController(text: widget.playersModel.name);
+      _nickNameController =
+          TextEditingController(text: widget.playersModel.shortName);
+      _pointsController =
+          TextEditingController(text: "${widget.playersModel.points}");
+      _creditController =
+          TextEditingController(text: widget.playersModel.credits.toString());
+    }
     getTeamsData();
     getTournamentData();
     getSkillsData();
@@ -405,6 +421,7 @@ class _AddPlayerState extends State<AddPlayer> {
       onWillPop: () async => Navigator.push(context,
           MaterialPageRoute(builder: (context) => new ManagePlayerScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Card(
@@ -493,7 +510,7 @@ class _AddPlayerState extends State<AddPlayer> {
                                 : ""),
                         dropDownCountries(
                             selectedCategory: _country,
-                            categories: _tournamentList,
+                            categories: countryList,
                             name: "Select Country")
                       ],
                     ),
@@ -553,6 +570,22 @@ class _AddPlayerState extends State<AddPlayer> {
   }
 
   _editPlayer() {
+    if (_team == null) {
+      showDialog("Please select Team");
+      return;
+    }
+    if (_skill == null) {
+      showDialog("Please select Skills");
+      return;
+    }
+    if (imageText == null && widget.playersModel.picture == null) {
+      showDialog("Please select Image");
+      return;
+    }
+    if (_country == null) {
+      showDialog("Please select Country");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       PlayersModel playersModel = PlayersModel(
           name: _nameController.text == null
@@ -584,8 +617,8 @@ class _AddPlayerState extends State<AddPlayer> {
     }
   }
 
-  bool isSwitched = false;
-  int isEnabled = 0;
+  bool isSwitched = true;
+  int isEnabled = 1;
   var textValue = 'Not Playing';
   void toggleSwitch(bool value) {
     if (isSwitched == false) {
@@ -605,8 +638,8 @@ class _AddPlayerState extends State<AddPlayer> {
     }
   }
 
-  bool isSwitch = false;
-  int isStatus = 0;
+  bool isSwitch = true;
+  int isStatus = 1;
   var textvalue = 'Status';
   void toggleSwitchStatus(bool value) {
     if (isSwitched == false) {
@@ -649,6 +682,12 @@ class _AddPlayerState extends State<AddPlayer> {
     });
   }
 
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
+  }
+
   String imageText;
   uploadImageToStorage() {
     uploadImage(onSelected: (file) {
@@ -662,6 +701,22 @@ class _AddPlayerState extends State<AddPlayer> {
 
   List playerName = [];
   _submit() {
+    if (_team == null) {
+      showDialog("Please select Team");
+      return;
+    }
+    if (_skill == null) {
+      showDialog("Please select Skills");
+      return;
+    }
+    if (imageText == null) {
+      showDialog("Please select Image");
+      return;
+    }
+    if (_country == null) {
+      showDialog("Please select Country");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       playerName.contains(_nameController.text)
           ? Fluttertoast.showToast(

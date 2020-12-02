@@ -21,10 +21,12 @@ class AddMatches extends StatefulWidget {
 
 class _AddMatchesState extends State<AddMatches> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _venueController = TextEditingController();
   TextEditingController _numberController = TextEditingController();
   TextEditingController _scoreController = TextEditingController();
+  TextEditingController _startDateController = TextEditingController();
   Widget textFieldWithText(String name, TextEditingController controller,
       [ValidationKey inputValidate,
       TextInputType keyboardType,
@@ -313,6 +315,19 @@ class _AddMatchesState extends State<AddMatches> {
     // TODO: implement initState
     super.initState();
     _loading = true;
+    if (widget.matchesModel.description != "" &&
+        widget.matchesModel.description != null) {
+      _numberController =
+          TextEditingController(text: widget.matchesModel.number.toString());
+      _descriptionController =
+          TextEditingController(text: widget.matchesModel.description);
+      _venueController =
+          TextEditingController(text: "${widget.matchesModel.venue}");
+      _scoreController =
+          TextEditingController(text: widget.matchesModel.score.toString());
+      _startDateController =
+          TextEditingController(text: widget.matchesModel.startDate.toString());
+    }
     getTournamentData();
     getTeamsData();
   }
@@ -323,6 +338,7 @@ class _AddMatchesState extends State<AddMatches> {
       onWillPop: () async => Navigator.push(
           context, MaterialPageRoute(builder: (context) => new MatchScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Card(
@@ -449,11 +465,18 @@ class _AddMatchesState extends State<AddMatches> {
     );
   }
 
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
+  }
+
   var startDateAndTime;
   Widget startDateAndTimeField() {
     final format = DateFormat("yyyy-MM-dd HH:mm");
     return Container(
       child: DateTimeField(
+        controller: _startDateController,
         format: format,
         onShowPicker: (context, currentValue) async {
           final date = await showDatePicker(
@@ -506,12 +529,32 @@ class _AddMatchesState extends State<AddMatches> {
   }
 
   _editMatch() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
+//    if (_startDateController.text == null && startDateAndTime == null) {
+//      showDialog("Please select Start Date");
+//      return;
+//    }
+//    if (endDateAndTime == null) {
+//      showDialog("Please select End Date");
+//      return;
+//    }
+    if (_team1 == null) {
+      showDialog("Please select Team1");
+      return;
+    }
+    if (_team2 == null) {
+      showDialog("Please select Team2");
+      return;
+    }
+
     if (_formKey.currentState.validate()) {
       MatchesModel matchesModel = MatchesModel(
-          startDate: startDateAndTime,
-//              == null
-//              ? widget.matchesModel.startDate
-//              : startDateAndTime,
+          startDate: startDateAndTime == null
+              ? widget.matchesModel.startDate
+              : startDateAndTime,
           description: _descriptionController.text == null
               ? widget.matchesModel.description
               : _descriptionController.text,
@@ -540,6 +583,23 @@ class _AddMatchesState extends State<AddMatches> {
 
   List matchName = [];
   _submit() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
+    if (startDateAndTime == null) {
+      showDialog("Please select Start Date");
+      return;
+    }
+    if (_team1 == null) {
+      showDialog("Please select Team1");
+      return;
+    }
+    if (_team2 == null) {
+      showDialog("Please select Team2");
+      return;
+    }
+
     if (_formKey.currentState.validate()) {
 //      _tournamentList.forEach((element) {
 //        matchName.add(element.name);

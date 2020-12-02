@@ -39,6 +39,8 @@ class GetPostContest {
       print(response.statusCode);
       if (response.statusCode == 200) {
         //function();
+        Fluttertoast.showToast(
+            msg: "Added Successfully", gravity: ToastGravity.CENTER);
         print("Data Added");
         var jsonData = jsonDecode(response.body);
         print("JsonData is : $jsonData");

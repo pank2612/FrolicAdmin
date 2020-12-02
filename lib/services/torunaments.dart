@@ -20,7 +20,7 @@ class GetPostTournaments {
         //print("Data is${tounamentModel.tournamentModel[1].name}");
         return tounamentModel;
       }
-      throw "Something went wrong ${response.statusCode}";
+      // throw "Something went wrong ${response.statusCode}";
     } catch (e) {
       print("Error is ${e.toString()}");
     }

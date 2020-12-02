@@ -14,6 +14,7 @@ import 'package:firebase/firebase.dart' as fb;
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:frolicsports/services/torunaments.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 
 class AddTournament extends StatefulWidget {
   String edit;
@@ -31,13 +32,18 @@ class _AddTournamentState extends State<AddTournament> {
   TextEditingController _playersController = TextEditingController();
   TextEditingController _maxSingleTeamController = TextEditingController();
   TextEditingController _deadlineSecondsController = TextEditingController();
+  TextEditingController _startDateController = TextEditingController();
+  TextEditingController _endDateController = TextEditingController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   var startDateAndTime;
   var endDateAndTime;
+
   Widget startDateAndTimeField() {
     final format = DateFormat("yyyy-MM-dd HH:mm");
     return Container(
       child: DateTimeField(
         format: format,
+        controller: _startDateController,
         onShowPicker: (context, currentValue) async {
           final date = await showDatePicker(
               context: context,
@@ -65,13 +71,14 @@ class _AddTournamentState extends State<AddTournament> {
     final format = DateFormat("yyyy-MM-dd HH:mm");
     return Container(
       child: DateTimeField(
+        controller: _endDateController,
         format: format,
         onShowPicker: (context, currentValue) async {
           final date = await showDatePicker(
               context: context,
               firstDate: DateTime(1900),
               initialDate: currentValue ?? DateTime.now(),
-              lastDate: DateTime(2100));
+              lastDate: DateTime(2021));
           if (date != null) {
             final time = await showTimePicker(
                 context: context,
@@ -269,10 +276,17 @@ class _AddTournamentState extends State<AddTournament> {
     );
   }
 
+  List<String> countryList = [
+    "India",
+    "Pakistan",
+    "Australia",
+    "England",
+    "WestIndies",
+    "South Affrica",
+    "Bangladesh"
+  ];
   dropDownCountry(
-      {List<TournamentModel> categories,
-      String selectedCategory,
-      String name}) {
+      {List<String> categories, String selectedCategory, String name}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,12 +323,11 @@ class _AddTournamentState extends State<AddTournament> {
                             'SELECT COUNTRY',
                             style: TextStyle(fontSize: 16, color: Colors.black),
                           ),
-                          items: _tournamentList.map((tournament) {
+                          items: countryList.map((country) {
                             return new DropdownMenuItem(
-                                value: tournament.country.toString(),
+                                value: country.toString(),
                                 child: Text(
-                                  //'',
-                                  tournament.country.toString(),
+                                  country.toString(),
                                   style: TextStyle(color: Colors.black),
                                 ));
                           }).toList(),
@@ -365,17 +378,25 @@ class _AddTournamentState extends State<AddTournament> {
     _loading = true;
     // TODO: implement initState
     super.initState();
-//    _titleController = TextEditingController(text: widget.tournamentModel.name);
-//    _descriptionController =
-//        TextEditingController(text: widget.tournamentModel.description);
-//    _deadlineSecondsController = TextEditingController(
-//        text: "${widget.tournamentModel.deadlineSeconds}");
-//    _maxSingleTeamController = TextEditingController(
-//        text: widget.tournamentModel.maxSingleTeam.toString());
-//    _maxPointsController = TextEditingController(
-//        text: widget.tournamentModel.maxPoints.toString());
-//    _playersController = TextEditingController(
-//        text: widget.tournamentModel.maxPlayers.toString());
+    if (widget.tournamentModel.name != "" &&
+        widget.tournamentModel.name != null) {
+      _titleController =
+          TextEditingController(text: widget.tournamentModel.name);
+      _descriptionController =
+          TextEditingController(text: widget.tournamentModel.description);
+      _deadlineSecondsController = TextEditingController(
+          text: "${widget.tournamentModel.deadlineSeconds}");
+      _maxSingleTeamController = TextEditingController(
+          text: widget.tournamentModel.maxSingleTeam.toString());
+      _maxPointsController = TextEditingController(
+          text: widget.tournamentModel.maxPoints.toString());
+      _playersController = TextEditingController(
+          text: widget.tournamentModel.maxPlayers.toString());
+      _startDateController = TextEditingController(
+          text: widget.tournamentModel.startDate.toString());
+      _endDateController = TextEditingController(
+          text: widget.tournamentModel.endDate.toString());
+    }
     GetSports getSports = GetSports();
     print("TOUR DATA ${widget.tournamentModel.name}");
     getSports.getSports1().then((sports) {
@@ -398,6 +419,7 @@ class _AddTournamentState extends State<AddTournament> {
       onWillPop: () async => Navigator.push(context,
           MaterialPageRoute(builder: (context) => new TournamentScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Card(
@@ -407,8 +429,6 @@ class _AddTournamentState extends State<AddTournament> {
               child: Form(
                 key: _formKey,
                 child: ListView(
-//                crossAxisAlignment: CrossAxisAlignment.start,
-//                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       "ADD TOUNAMENT",
@@ -513,7 +533,7 @@ class _AddTournamentState extends State<AddTournament> {
                       children: [
                         dropDownCountry(
                             name: "SELECT COUNRTY",
-                            categories: _tournamentList,
+                            categories: countryList,
                             selectedCategory: _selectCountry),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.1,
@@ -559,9 +579,9 @@ class _AddTournamentState extends State<AddTournament> {
     );
   }
 
-  bool isSwitched = false;
-  int isEnabled = 0;
-  var textValue = 'Switch is OFF';
+  bool isSwitched = true;
+  int isEnabled = 1;
+  var textValue = 'Switch is ON';
   void toggleSwitch(bool value) {
     if (isSwitched == false) {
       setState(() {
@@ -569,7 +589,7 @@ class _AddTournamentState extends State<AddTournament> {
         isSwitched = true;
         textValue = 'Switch Button is ON';
       });
-      print('Switch Button is ON');
+      print('Switch Button is ON and $isEnabled');
     } else {
       setState(() {
         isEnabled = 0;
@@ -581,6 +601,19 @@ class _AddTournamentState extends State<AddTournament> {
   }
 
   _editTour() async {
+    if (_category == null) {
+      showDialog("Please select Sports");
+      return;
+    }
+    if (imageText == null && widget.tournamentModel.logo == null) {
+      showDialog("Please select Image");
+      return;
+    }
+    if (_selectCountry == null) {
+      showDialog("Please select Country");
+      return;
+    }
+
     if (_formKey.currentState.validate()) {
       TournamentModel tournamentModel = TournamentModel(
           description: _descriptionController.text == null
@@ -589,12 +622,17 @@ class _AddTournamentState extends State<AddTournament> {
           deadlineSeconds: int.parse(_deadlineSecondsController.text) == null
               ? widget.tournamentModel.deadlineSeconds
               : int.parse(_deadlineSecondsController.text),
-          enabled: isEnabled,
+          enabled:
+              isEnabled == null ? widget.tournamentModel.enabled : isEnabled,
           name: _titleController.text == null
               ? widget.tournamentModel.name
               : _titleController.text,
-          startDate: startDateAndTime,
-          endDate: endDateAndTime,
+          startDate: startDateAndTime == null
+              ? widget.tournamentModel.startDate
+              : startDateAndTime,
+          endDate: endDateAndTime == null
+              ? widget.tournamentModel.endDate
+              : endDateAndTime,
           maxPlayers: int.parse(_playersController.text) == null
               ? widget.tournamentModel.maxPlayers
               : int.parse(_playersController.text),
@@ -607,8 +645,12 @@ class _AddTournamentState extends State<AddTournament> {
               : int.parse(_maxSingleTeamController.text),
           playerFolderName: "tournament/ronnie.png",
           teamFolderName: "tournament/ronnie.png",
-          country: _selectCountry == null ? "IND" : "IND",
-          sportsId: int.parse(_category),
+          country: _selectCountry == null
+              ? widget.tournamentModel.country
+              : _selectCountry,
+          sportsId: int.parse(_category) == null
+              ? widget.tournamentModel.sportsId
+              : int.parse(_category),
           id: widget.tournamentModel.id);
       await getPostTournaments.editTournaments(
         tournamentModelObject: tournamentModel,
@@ -651,6 +693,26 @@ class _AddTournamentState extends State<AddTournament> {
 
   List tournamentName = [];
   _submit() {
+    if (_category == null) {
+      showDialog("Please select Sports");
+      return;
+    }
+    if (imageText == null) {
+      showDialog("Please select Image");
+      return;
+    }
+    if (startDateAndTime == null) {
+      showDialog("Please select Start Date");
+      return;
+    }
+    if (endDateAndTime == null) {
+      showDialog("Please select End Date");
+      return;
+    }
+    if (_selectCountry == null) {
+      showDialog("Please select Country");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       _tournamentList.forEach((element) {
         tournamentName.add(element.name);
@@ -668,8 +730,14 @@ class _AddTournamentState extends State<AddTournament> {
     postTournamentData();
     Fluttertoast.showToast(
       msg: "Added Successfully",
-      gravity: ToastGravity.CENTER_LEFT,
+      gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: 2,
     );
+  }
+
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
   }
 }

@@ -171,6 +171,7 @@ class _ContestScreenState extends State<ContestScreen> {
                                   normalText("Entry Amount"),
                                   normalText("Max Entries"),
                                   normalText("Max Entries/Users"),
+                                  normalText("Contest Category"),
                                   normalText("Action"),
                                 ],
                               ),
@@ -217,6 +218,9 @@ class _ContestScreenState extends State<ContestScreen> {
                                                       .toString()),
                                                   normalText(contestModel
                                                       .maxEntriesPerUser
+                                                      .toString()),
+                                                  normalText(contestModel
+                                                      .contestCategory
                                                       .toString()),
                                                   Container(
                                                       width:

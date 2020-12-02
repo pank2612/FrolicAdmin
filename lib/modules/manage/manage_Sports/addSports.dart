@@ -21,6 +21,7 @@ class AddSports extends StatefulWidget {
 
 class _AddSportsState extends State<AddSports> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _shortCodeController = TextEditingController();
   Widget textFieldWithText(String name, TextEditingController controller,
@@ -182,8 +183,6 @@ class _AddSportsState extends State<AddSports> {
     _nameController = TextEditingController(text: widget.sportsModel.name);
     _shortCodeController =
         TextEditingController(text: widget.sportsModel.shortCode);
-
-    print(widget.sportsModel.name);
   }
 
   @override
@@ -192,6 +191,7 @@ class _AddSportsState extends State<AddSports> {
       onWillPop: () async => Navigator.push(context,
           MaterialPageRoute(builder: (context) => new ManageSportsScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.only(
               right: MediaQuery.of(context).size.width * 0.02,
@@ -277,7 +277,17 @@ class _AddSportsState extends State<AddSports> {
     );
   }
 
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
+  }
+
   _editSports() async {
+    if (imageText == null && widget.sportsModel.logo == null) {
+      showDialog("Please select Image");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       SportsModel sportsModel = SportsModel(
           id: widget.sportsModel.id,
@@ -299,6 +309,10 @@ class _AddSportsState extends State<AddSports> {
 
   List sportName = [];
   _submit() {
+    if (imageText == null) {
+      showDialog("Please select Image");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       sportName.contains(_nameController.text)
           ? Fluttertoast.showToast(

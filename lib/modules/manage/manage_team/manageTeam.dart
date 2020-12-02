@@ -28,13 +28,16 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
   GetPostTournaments getPostTournaments = GetPostTournaments();
   getTournamentData() async {
     tournamentModelList = await getPostTournaments.getTournaments();
-//    setState(() {
-//      _loading = false;
-//    });
+    setState(() {
+      _loading = false;
+    });
   }
 
   String getName(int Id) {
-    String tourName = "";
+    String tourName = '';
+//    tournamentModelList == null
+//        ? tourName = ""
+//        :
     tournamentModelList.tournamentModel.forEach((tour) {
       if (tour.id == Id) {
         tourName = tour.name;
@@ -48,8 +51,9 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
     // TODO: implement initState
     super.initState();
     _loading = true;
-    getTeamsData();
+
     getTournamentData();
+    getTeamsData();
   }
 
   @override
@@ -154,160 +158,178 @@ class _ManageTeamScreenState extends State<ManageTeamScreen> {
                               ),
                             ),
                             Expanded(
-                              child: ListView.builder(
-                                itemBuilder: (context, index) {
-                                  TeamsModel teamsModel = TeamsModel();
-                                  teamsModel = teamsModelList.teamsModel[index];
-                                  return Column(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 2),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.1,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                              child: _loading == true
+                                  ? Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : ListView.builder(
+                                      itemBuilder: (context, index) {
+                                        TeamsModel teamsModel = TeamsModel();
+                                        teamsModel =
+                                            teamsModelList.teamsModel[index];
+                                        return Column(
                                           children: [
-                                            numbers(teamsModel.id.toString()),
-                                            normalText(getName(
-                                                teamsModel.tournamentId)),
-                                            normalText(
-                                                teamsModel.name.toString()),
-                                            normalText(teamsModel.shortName
-                                                .toString()),
                                             Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.08,
-                                                child: StreamBuilder(
-                                                  stream: downloadUrl(
-                                                          // "FrolicSports/Tournaments/ronnie.jpg"
-                                                          teamsModel.name,
-                                                          teamsModel.logo
-                                                              .toString())
-                                                      .asStream(),
-                                                  builder: (context, snapShot) {
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12, vertical: 2),
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.1,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  numbers(
+                                                      teamsModel.id.toString()),
+                                                  normalText(getName(
+                                                      teamsModel.tournamentId)),
+                                                  normalText(teamsModel.name
+                                                      .toString()),
+                                                  normalText(teamsModel
+                                                      .shortName
+                                                      .toString()),
+                                                  Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.08,
+                                                      child: StreamBuilder(
+                                                        stream: downloadUrl(
+                                                                // "FrolicSports/Tournaments/ronnie.jpg"
+                                                                teamsModel.name,
+                                                                teamsModel.logo
+                                                                    .toString())
+                                                            .asStream(),
+                                                        builder: (context,
+                                                            snapShot) {
 //                                                        print(
 //                                                            "logo is ${sportsModel.logo.length}");
-                                                    if (snapShot
-                                                            .connectionState ==
-                                                        ConnectionState
-                                                            .waiting) {
-                                                      return Container(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          width: 120,
-                                                          height: 120,
-                                                          // color: Colors.transparent,
-                                                          child: CircleAvatar(
-                                                              backgroundColor:
-                                                                  Colors
-                                                                      .transparent,
+                                                          if (snapShot
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .waiting) {
+                                                            return Container(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                width: 120,
+                                                                height: 120,
+                                                                // color: Colors.transparent,
+                                                                child: CircleAvatar(
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    child:
+                                                                        CircularProgressIndicator()));
+                                                          } else if (!snapShot
+                                                              .hasData) {
+                                                            return Container(
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              width: 200,
+                                                              height: 200,
                                                               child:
-                                                                  CircularProgressIndicator()));
-                                                    } else if (!snapShot
-                                                        .hasData) {
-                                                      return Container(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        width: 200,
-                                                        height: 200,
-                                                        child: CircleAvatar(
-                                                          radius: 30,
-                                                          backgroundColor:
-                                                              Colors
-                                                                  .transparent,
-                                                          child: CircleAvatar(
-                                                            child: Image.network(
-                                                                "https://upload.wikimedia.org/wikipedia/commons"
-                                                                "/thumb/d/d1/Icons8_flat_businessman.svg/768"
-                                                                "px-Icons8_flat_businessman.svg.png"),
-                                                          ),
+                                                                  CircleAvatar(
+                                                                radius: 30,
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                child:
+                                                                    CircleAvatar(
+                                                                  child: Image.network(
+                                                                      "https://upload.wikimedia.org/wikipedia/commons"
+                                                                      "/thumb/d/d1/Icons8_flat_businessman.svg/768"
+                                                                      "px-Icons8_flat_businessman.svg.png"),
+                                                                ),
 //                                                              child: Image.network(
 //                                                                  snapShot.data
 //                                                                      .toString()),
-                                                        ),
-                                                      );
-                                                    } else if (snapShot
-                                                        .hasData) {
-                                                      return Container(
-                                                        width: 20,
-                                                        height: 60,
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: CircleAvatar(
-                                                          radius: 35,
-                                                          backgroundColor:
-                                                              Colors
-                                                                  .transparent,
-                                                          child: Image.network(
-                                                            snapShot.data
-                                                                .toString(),
-                                                            fit: BoxFit.fill,
+                                                              ),
+                                                            );
+                                                          } else if (snapShot
+                                                              .hasData) {
+                                                            return Container(
+                                                              width: 20,
+                                                              height: 60,
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              child:
+                                                                  CircleAvatar(
+                                                                radius: 35,
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .transparent,
+                                                                child: Image
+                                                                    .network(
+                                                                  snapShot.data
+                                                                      .toString(),
+                                                                  fit: BoxFit
+                                                                      .fill,
 //                                                          height: 100,
 //                                                          width: 100,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }
-                                                    return null;
-                                                  },
-                                                )),
-                                            USER_TYPE == "admin"
-                                                ? Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.08,
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.close,
-                                                          color: Colors
-                                                              .red.shade700,
-                                                        ),
-                                                        IconButton(
-                                                          onPressed: () {
-                                                            teamIndex =
-                                                                index + 1;
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            AddTeams(
-                                                                              teamsModel: editData(),
-                                                                              edit: "edit",
-                                                                            )));
-                                                          },
-                                                          icon: Icon(
-                                                            Icons.mode_edit,
-                                                            color:
-                                                                Colors.orange,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ))
-                                                : Text(""),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                          return null;
+                                                        },
+                                                      )),
+                                                  USER_TYPE == "admin"
+                                                      ? Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.08,
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.close,
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade700,
+                                                              ),
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  teamIndex =
+                                                                      index + 1;
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => AddTeams(
+                                                                                teamsModel: editData(),
+                                                                                edit: "edit",
+                                                                              )));
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .mode_edit,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ))
+                                                      : Text(""),
+                                                ],
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 1,
+                                            )
                                           ],
-                                        ),
-                                      ),
-                                      Divider(
-                                        thickness: 1,
-                                      )
-                                    ],
-                                  );
-                                },
-                                itemCount: teamsModelList.teamsModel == null
-                                    ? 0
-                                    : teamsModelList.teamsModel.length,
-                              ),
+                                        );
+                                      },
+                                      itemCount: teamsModelList.teamsModel ==
+                                              null
+                                          ? 0
+                                          : teamsModelList.teamsModel.length,
+                                    ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(12.0),

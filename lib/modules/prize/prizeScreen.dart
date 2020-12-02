@@ -59,257 +59,257 @@ class _PrizeScreenState extends State<PrizeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _addButton(),
-              Expanded(
-                child: Card(
-                    elevation: 5,
-                    //color: Colors.grey,
-                    child: Stack(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(12),
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(
-                                    left: MediaQuery.of(context).size.width *
-                                        0.20),
-                                child: Text("Search:",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                    )),
-                              ),
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.01,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    "PRIZE",
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.lightBlue),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.112,
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.35,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.05,
-                                    child: TextField(
-                                        // controller: controller,
-                                        style: TextStyle(
-                                          fontSize: 15.0,
-                                          color: Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                        )),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 2),
-                              margin: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height *
-                                      0.115),
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height * 0.08,
-                              color: Colors.grey.shade300,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  numbers("#"),
-                                  normalText("ContestId"),
-                                  normalText("RankRangeStart"),
-                                  normalText("RankRangeEnd"),
-                                  normalText("Amount"),
-                                  normalText("Status"),
-                                  normalText("Action"),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: _loading == true
-                                  ? Center(
-                                      child: CircularProgressIndicator(),
-                                    )
-                                  : ListView.builder(
-                                      itemBuilder: (context, index) {
-                                        PrizeModel prizeModel = PrizeModel();
-                                        prizeModel =
-                                            prizeModelList.prizeModel[index];
-                                        return Column(
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12, vertical: 2),
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.1,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  numbers(
-                                                      prizeModel.id.toString()),
-                                                  normalText(getName(
-                                                      prizeModel.contestId)),
-                                                  normalText(prizeModel
-                                                      .rankRangeStart
-                                                      .toString()),
-                                                  normalText(prizeModel
-                                                      .rankRangeEnd
-                                                      .toString()),
-                                                  normalText(prizeModel.amount
-                                                      .toString()),
-                                                  normalText(prizeModel.status
-                                                      .toString()),
-                                                  USER_TYPE == "admin"
-                                                      ? Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.08,
-                                                          child: Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons.close,
-                                                                color: Colors
-                                                                    .red
-                                                                    .shade700,
-                                                              ),
-                                                              IconButton(
-                                                                onPressed: () {
-                                                                  prizeIndex =
-                                                                      index + 1;
-                                                                  Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => AddPrize(
-                                                                                edit: "edit",
-                                                                                prizeModelObject: editData(),
-                                                                                contestsModel: contestDataEdit(prizeModel.contestId.toString()),
-                                                                                prizeModel: prizeListEdit(prizeModel.contestId.toString()),
-                                                                              )));
-                                                                },
-                                                                icon: Icon(
-                                                                  Icons
-                                                                      .mode_edit,
-                                                                  color: Colors
-                                                                      .orange,
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ))
-                                                      : Text(""),
-                                                ],
-                                              ),
-                                            ),
-                                            Divider(
-                                              thickness: 1,
-                                            )
-                                          ],
-                                        );
-                                      },
-                                      itemCount: prizeModelList.prizeModel ==
-                                              null
-                                          ? 0
-                                          : prizeModelList.prizeModel.length,
-                                    ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Showing 1 to 3 of 3 entries"),
-                                  Row(
-                                    children: [
-                                      MaterialButton(
-                                        onPressed: () {},
-                                        color: Colors.lightBlue,
-                                        child: Text(
-                                          "Previous",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                      MaterialButton(
-                                        onPressed: () {},
-                                        color: Colors.lightBlue,
-                                        child: Text(
-                                          "1",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                      MaterialButton(
-                                        color: Colors.lightBlue,
-                                        onPressed: () {},
-                                        child: Text(
-                                          "Next",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              RaisedButton(
-                                color: Colors.lightBlue,
-                                child: Text(
-                                  "COPY",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onPressed: () {},
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              RaisedButton(
-                                color: Colors.lightBlue,
-                                child: Text(
-                                  "EXCEL",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onPressed: () {},
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    )),
-              )
+//              Expanded(
+//                child: Card(
+//                    elevation: 5,
+//                    //color: Colors.grey,
+//                    child: Stack(
+//                      children: [
+//                        Container(
+//                          padding: EdgeInsets.all(12),
+//                          width: MediaQuery.of(context).size.width,
+//                          child: Column(
+//                            mainAxisAlignment: MainAxisAlignment.start,
+//                            crossAxisAlignment: CrossAxisAlignment.start,
+//                            children: [
+//                              Container(
+//                                padding: EdgeInsets.only(
+//                                    left: MediaQuery.of(context).size.width *
+//                                        0.20),
+//                                child: Text("Search:",
+//                                    style: TextStyle(
+//                                      fontSize: 17,
+//                                    )),
+//                              ),
+//                              SizedBox(
+//                                height:
+//                                    MediaQuery.of(context).size.height * 0.01,
+//                              ),
+//                              Row(
+//                                children: [
+//                                  Text(
+//                                    "PRIZE",
+//                                    style: TextStyle(
+//                                        fontSize: 20, color: Colors.lightBlue),
+//                                  ),
+//                                  SizedBox(
+//                                    width: MediaQuery.of(context).size.width *
+//                                        0.112,
+//                                  ),
+//                                  Container(
+//                                    width: MediaQuery.of(context).size.width *
+//                                        0.35,
+//                                    height: MediaQuery.of(context).size.height *
+//                                        0.05,
+//                                    child: TextField(
+//                                        // controller: controller,
+//                                        style: TextStyle(
+//                                          fontSize: 15.0,
+//                                          color: Colors.black,
+//                                        ),
+//                                        decoration: InputDecoration(
+//                                          border: OutlineInputBorder(),
+//                                          fillColor: Colors.white,
+//                                          filled: true,
+//                                        )),
+//                                  )
+//                                ],
+//                              )
+//                            ],
+//                          ),
+//                        ),
+//                        Column(
+//                          crossAxisAlignment: CrossAxisAlignment.start,
+//                          mainAxisAlignment: MainAxisAlignment.start,
+//                          children: [
+//                            Container(
+//                              padding: EdgeInsets.symmetric(
+//                                  horizontal: 12, vertical: 2),
+//                              margin: EdgeInsets.only(
+//                                  top: MediaQuery.of(context).size.height *
+//                                      0.115),
+//                              width: MediaQuery.of(context).size.width,
+//                              height: MediaQuery.of(context).size.height * 0.08,
+//                              color: Colors.grey.shade300,
+//                              child: Row(
+//                                mainAxisAlignment:
+//                                    MainAxisAlignment.spaceBetween,
+//                                children: [
+//                                  numbers("#"),
+//                                  normalText("ContestId"),
+//                                  normalText("RankRangeStart"),
+//                                  normalText("RankRangeEnd"),
+//                                  normalText("Amount"),
+//                                  normalText("Status"),
+//                                  normalText("Action"),
+//                                ],
+//                              ),
+//                            ),
+//                            Expanded(
+//                              child: _loading == true
+//                                  ? Center(
+//                                      child: CircularProgressIndicator(),
+//                                    )
+//                                  : ListView.builder(
+//                                      itemBuilder: (context, index) {
+//                                        PrizeModel prizeModel = PrizeModel();
+//                                        prizeModel =
+//                                            prizeModelList.prizeModel[index];
+//                                        return Column(
+//                                          children: [
+//                                            Container(
+//                                              padding: EdgeInsets.symmetric(
+//                                                  horizontal: 12, vertical: 2),
+//                                              width: MediaQuery.of(context)
+//                                                  .size
+//                                                  .width,
+//                                              height: MediaQuery.of(context)
+//                                                      .size
+//                                                      .height *
+//                                                  0.1,
+//                                              child: Row(
+//                                                mainAxisAlignment:
+//                                                    MainAxisAlignment
+//                                                        .spaceBetween,
+//                                                children: [
+//                                                  numbers(
+//                                                      prizeModel.id.toString()),
+//                                                  normalText(getName(
+//                                                      prizeModel.contestId)),
+//                                                  normalText(prizeModel
+//                                                      .rankRangeStart
+//                                                      .toString()),
+//                                                  normalText(prizeModel
+//                                                      .rankRangeEnd
+//                                                      .toString()),
+//                                                  normalText(prizeModel.amount
+//                                                      .toString()),
+//                                                  normalText(prizeModel.status
+//                                                      .toString()),
+//                                                  USER_TYPE == "admin"
+//                                                      ? Container(
+//                                                          width: MediaQuery.of(
+//                                                                      context)
+//                                                                  .size
+//                                                                  .width *
+//                                                              0.08,
+//                                                          child: Row(
+//                                                            children: [
+//                                                              Icon(
+//                                                                Icons.close,
+//                                                                color: Colors
+//                                                                    .red
+//                                                                    .shade700,
+//                                                              ),
+//                                                              IconButton(
+//                                                                onPressed: () {
+//                                                                  prizeIndex =
+//                                                                      index + 1;
+//                                                                  Navigator.push(
+//                                                                      context,
+//                                                                      MaterialPageRoute(
+//                                                                          builder: (context) => AddPrize(
+//                                                                                edit: "edit",
+//                                                                                prizeModelObject: editData(),
+//                                                                                contestsModel: contestDataEdit(prizeModel.contestId.toString()),
+//                                                                                prizeModel: prizeListEdit(prizeModel.contestId.toString()),
+//                                                                              )));
+//                                                                },
+//                                                                icon: Icon(
+//                                                                  Icons
+//                                                                      .mode_edit,
+//                                                                  color: Colors
+//                                                                      .orange,
+//                                                                ),
+//                                                              )
+//                                                            ],
+//                                                          ))
+//                                                      : Text(""),
+//                                                ],
+//                                              ),
+//                                            ),
+//                                            Divider(
+//                                              thickness: 1,
+//                                            )
+//                                          ],
+//                                        );
+//                                      },
+//                                      itemCount: prizeModelList.prizeModel ==
+//                                              null
+//                                          ? 0
+//                                          : prizeModelList.prizeModel.length,
+//                                    ),
+//                            ),
+//                            Padding(
+//                              padding: const EdgeInsets.all(12.0),
+//                              child: Row(
+//                                mainAxisAlignment:
+//                                    MainAxisAlignment.spaceBetween,
+//                                children: [
+//                                  Text("Showing 1 to 3 of 3 entries"),
+//                                  Row(
+//                                    children: [
+//                                      MaterialButton(
+//                                        onPressed: () {},
+//                                        color: Colors.lightBlue,
+//                                        child: Text(
+//                                          "Previous",
+//                                          style: TextStyle(color: Colors.white),
+//                                        ),
+//                                      ),
+//                                      MaterialButton(
+//                                        onPressed: () {},
+//                                        color: Colors.lightBlue,
+//                                        child: Text(
+//                                          "1",
+//                                          style: TextStyle(color: Colors.white),
+//                                        ),
+//                                      ),
+//                                      MaterialButton(
+//                                        color: Colors.lightBlue,
+//                                        onPressed: () {},
+//                                        child: Text(
+//                                          "Next",
+//                                          style: TextStyle(color: Colors.white),
+//                                        ),
+//                                      )
+//                                    ],
+//                                  )
+//                                ],
+//                              ),
+//                            )
+//                          ],
+//                        ),
+//                        Padding(
+//                          padding: const EdgeInsets.all(8.0),
+//                          child: Row(
+//                            mainAxisAlignment: MainAxisAlignment.end,
+//                            children: [
+//                              RaisedButton(
+//                                color: Colors.lightBlue,
+//                                child: Text(
+//                                  "COPY",
+//                                  style: TextStyle(color: Colors.white),
+//                                ),
+//                                onPressed: () {},
+//                              ),
+//                              SizedBox(
+//                                width: 10,
+//                              ),
+//                              RaisedButton(
+//                                color: Colors.lightBlue,
+//                                child: Text(
+//                                  "EXCEL",
+//                                  style: TextStyle(color: Colors.white),
+//                                ),
+//                                onPressed: () {},
+//                              )
+//                            ],
+//                          ),
+//                        )
+//                      ],
+//                    )),
+//              )
             ],
           ),
         ),
@@ -356,7 +356,6 @@ class _PrizeScreenState extends State<PrizeScreen> {
     _contestList.forEach((element) {
       if (int.parse(_contestId) == element.id) {
         contestsModel = element;
-        print("contestID is ${element.id}");
       }
     });
     return contestsModel;
@@ -367,7 +366,6 @@ class _PrizeScreenState extends State<PrizeScreen> {
     _contestList.forEach((element) {
       if (int.parse(contestId) == element.id) {
         contestsModel = element;
-        print("contestID is ${element.id}");
       }
     });
     return contestsModel;
@@ -377,7 +375,6 @@ class _PrizeScreenState extends State<PrizeScreen> {
     List<PrizeModel> listPrize = List<PrizeModel>();
     prizeModelList.prizeModel.forEach((element) {
       if (int.parse(_contestId) == element.contestId) {
-        print("contest amount ${element.amount}");
         listPrize.add(element);
       }
     });
@@ -388,7 +385,6 @@ class _PrizeScreenState extends State<PrizeScreen> {
     List<PrizeModel> listPrize = List<PrizeModel>();
     prizeModelList.prizeModel.forEach((element) {
       if (int.parse(contestId) == element.contestId) {
-        print("contest amount ${element.amount}");
         listPrize.add(element);
       }
     });
@@ -397,7 +393,6 @@ class _PrizeScreenState extends State<PrizeScreen> {
 
   Widget dropDownContest(
       {List<ContestsModel> categories, String selectedCategory, String name}) {
-    print("selected $selectedCategory");
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -447,7 +442,6 @@ class _PrizeScreenState extends State<PrizeScreen> {
                             setState(() {
                               selectedCategory = newValue;
                               _contestId = newValue;
-                              print("selected value $_contestId");
                             });
                           },
                           value: _contestId,
@@ -487,8 +481,9 @@ class _PrizeScreenState extends State<PrizeScreen> {
             actions: [
               Container(
                 width: MediaQuery.of(context).size.width * 0.30,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     MaterialButton(
                       child: Text(
@@ -503,6 +498,29 @@ class _PrizeScreenState extends State<PrizeScreen> {
                                 gravity: ToastGravity.CENTER,
                               )
                             : sendData();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text(
+                        "Edit Prize",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      color: Colors.blue,
+                      onPressed: () {
+                        _contestId == null
+                            ? Fluttertoast.showToast(
+                                msg: "Please select Contest name",
+                                gravity: ToastGravity.CENTER,
+                              )
+                            : Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddPrize(
+                                          prizeModelObject: editData(),
+                                          contestsModel: contestData(),
+                                          edit: "edit",
+                                          prizeModel: prizeList(),
+                                        )));
                       },
                     ),
                   ],
@@ -546,7 +564,6 @@ class _PrizeScreenState extends State<PrizeScreen> {
     prizeModelList.prizeModel.forEach((element) {
       if (prizeIndex == element.id) {
         prizeModel = element;
-        print("data is ${element.amount}");
       }
     });
     return prizeModel;

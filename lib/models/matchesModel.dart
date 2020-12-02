@@ -48,7 +48,9 @@ class MatchesModel {
         id: json["id"],
         tournamentId: json["tournamentId"],
         number: json["number"],
-        startDate: DateTime.parse(json["startDate"]),
+        startDate: json["startDate"] == null
+            ? null
+            : DateTime.parse(json["startDate"]),
         startTime: json["startTime"],
         venue: json["venue"],
         description: json["description"],
@@ -61,7 +63,9 @@ class MatchesModel {
         "id": id,
         "tournamentId": tournamentId,
         "number": number,
-        "startDate": startDate.toIso8601String(),
+        "startDate": startDate == null
+            ? null
+            : startDate.toIso8601String().replaceAll("Z", ""),
         "startTime": startTime,
         "venue": venue,
         "description": description,

@@ -17,6 +17,7 @@ class AddRules extends StatefulWidget {
 
 class _AddRulesState extends State<AddRules> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _shortCodeController = TextEditingController();
   TextEditingController _pointsController = TextEditingController();
@@ -158,6 +159,13 @@ class _AddRulesState extends State<AddRules> {
     // TODO: implement initState
     super.initState();
     _loading = true;
+    if (widget.rulesModel.name != "" && widget.rulesModel.name != null) {
+      _nameController = TextEditingController(text: widget.rulesModel.name);
+      _shortCodeController =
+          TextEditingController(text: widget.rulesModel.shortName);
+      _pointsController =
+          TextEditingController(text: "${widget.rulesModel.points.toString()}");
+    }
     getTournamentData();
     getRuleData();
   }
@@ -168,6 +176,7 @@ class _AddRulesState extends State<AddRules> {
       onWillPop: () async => Navigator.push(context,
           MaterialPageRoute(builder: (context) => new ManageRulesScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Card(
@@ -254,6 +263,10 @@ class _AddRulesState extends State<AddRules> {
 
   List ruleName = [];
   _submit() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       ruleName.contains(_nameController.text)
           ? Fluttertoast.showToast(
@@ -264,7 +277,17 @@ class _AddRulesState extends State<AddRules> {
     }
   }
 
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
+  }
+
   _editRules() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       RulesModel rulesModel = RulesModel(
           id: widget.rulesModel.id,

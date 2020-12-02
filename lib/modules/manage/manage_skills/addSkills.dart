@@ -147,11 +147,27 @@ class _AddSkillsState extends State<AddSkills> {
     );
   }
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loading = true;
+    if (widget.skillsModel.name != "" && widget.skillsModel.name != null) {
+      _nameController = TextEditingController(text: widget.skillsModel.name);
+      _minController =
+          TextEditingController(text: widget.skillsModel.min.toString());
+      _ShortCodeController =
+          TextEditingController(text: "${widget.skillsModel.shortName}");
+      _maxController =
+          TextEditingController(text: widget.skillsModel.max.toString());
+    }
     getTournamentData();
   }
 
@@ -161,6 +177,7 @@ class _AddSkillsState extends State<AddSkills> {
       onWillPop: () async => Navigator.push(context,
           MaterialPageRoute(builder: (context) => new ManageSkillsScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Card(
@@ -261,6 +278,10 @@ class _AddSkillsState extends State<AddSkills> {
   }
 
   _editSkill() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       SkillsModel skillsModel = SkillsModel(
           name: _nameController.text == null
@@ -284,6 +305,10 @@ class _AddSkillsState extends State<AddSkills> {
   }
 
   _submit() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       postSkillsData();
     }

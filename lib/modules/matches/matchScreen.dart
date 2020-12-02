@@ -38,6 +38,9 @@ class _MatchScreenState extends State<MatchScreen> {
   GetPostTeams getPostTeams = GetPostTeams();
   getTeamData() async {
     teamsModelList = await getPostTeams.getTeams();
+    setState(() {
+      _loading = false;
+    });
   }
 
   TournamentModelList tournamentModelList = TournamentModelList();
@@ -49,15 +52,11 @@ class _MatchScreenState extends State<MatchScreen> {
     });
   }
 
-  //bool _loadingName = true;
   String getName(int Id) {
     String tourName = "";
     tournamentModelList.tournamentModel.forEach((tour) {
       if (tour.id == Id) {
         tourName = tour.name;
-//        setState(() {
-//          _loadingName = false;
-//        });
       }
     });
     return tourName;

@@ -156,11 +156,27 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
     });
   }
 
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loading = true;
+    if (widget.specialRulesModel.name != "" &&
+        widget.specialRulesModel.name != null) {
+      _nameController =
+          TextEditingController(text: widget.specialRulesModel.name);
+      _shortCodeController =
+          TextEditingController(text: widget.specialRulesModel.shortName);
+      _pointsController = TextEditingController(
+          text: "${widget.specialRulesModel.points.toString()}");
+    }
     getTournamentData();
     getRuleData();
   }
@@ -173,6 +189,7 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
           MaterialPageRoute(
               builder: (context) => new ManageSpecialRulesScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Card(
@@ -260,6 +277,10 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
   }
 
   _editRules() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       SpecialRulesModel specialRulesModel = SpecialRulesModel(
           id: widget.specialRulesModel.id,
@@ -282,6 +303,10 @@ class _AddSpecialRulesState extends State<AddSpecialRules> {
 
   List ruleName = [];
   _submit() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       ruleName.contains(_nameController.text)
           ? Fluttertoast.showToast(

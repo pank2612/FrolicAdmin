@@ -21,6 +21,7 @@ class AddTeams extends StatefulWidget {
 
 class _AddTeamsState extends State<AddTeams> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _shortCodeController = TextEditingController();
 
@@ -249,11 +250,23 @@ class _AddTeamsState extends State<AddTeams> {
     });
   }
 
+  void showDialog(String name) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(name),
+    ));
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loading = true;
+    if (widget.teamsModel.name != "" && widget.teamsModel.name != null) {
+      _nameController = TextEditingController(text: widget.teamsModel.name);
+      _shortCodeController =
+          TextEditingController(text: widget.teamsModel.shortName);
+    }
+
     getTournamentData();
     getTeamsData();
   }
@@ -264,6 +277,7 @@ class _AddTeamsState extends State<AddTeams> {
       onWillPop: () async => Navigator.push(context,
           MaterialPageRoute(builder: (context) => new ManageTeamScreen())),
       child: Scaffold(
+        key: _scaffoldKey,
         body: Padding(
           padding: EdgeInsets.all(10),
           child: Card(
@@ -345,6 +359,14 @@ class _AddTeamsState extends State<AddTeams> {
   }
 
   _editTeam() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
+    if (imageText == null && widget.teamsModel.logo == null) {
+      showDialog("Please select Image");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       TeamsModel teamsModel = TeamsModel(
           name: _nameController.text == null
@@ -365,6 +387,14 @@ class _AddTeamsState extends State<AddTeams> {
 
   List teamName = [];
   _submit() {
+    if (_tourName == null) {
+      showDialog("Please select Tournament");
+      return;
+    }
+    if (imageText == null) {
+      showDialog("Please select Image");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       teamName.contains(_nameController.text)
           ? Fluttertoast.showToast(

@@ -49,7 +49,7 @@ class GetPostPrize {
 
   editPrize({PrizeModel prizeModelObject}) async {
     var encodedData = jsonEncode(prizeModelObject.toJson());
-    // print("encoded Data $encodedData");
+    print("encoded Data -------------$encodedData");
     try {
       var response = await http.put("${HTTP_URL}prizes/${prizeModelObject.id}",
           headers: {HttpHeaders.contentTypeHeader: "application/json"},
@@ -59,9 +59,9 @@ class GetPostPrize {
         Fluttertoast.showToast(
             msg: "Edit Successfully", gravity: ToastGravity.CENTER);
         // function();
-        print("Data Added");
+        print("Data Edit");
         var jsonData = jsonDecode(response.body);
-        // print("JsonData is : $jsonData");
+        print("JsonData is :----------------- $jsonData");
       }
 
       // throw "Something went wrong ${response.statusCode.toString()}";

@@ -37,9 +37,9 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
   GetPostTournaments getPostTournaments = GetPostTournaments();
   getTournamentData() async {
     tournamentModelList = await getPostTournaments.getTournaments();
-//    setState(() {
-//      _loading = false;
-//    });
+    setState(() {
+      _loading = false;
+    });
   }
 
   String getName(int Id) {
@@ -154,83 +154,94 @@ class _ManageRulesScreenState extends State<ManageRulesScreen> {
                               ),
                             ),
                             Expanded(
-                              child: ListView.builder(
-                                itemBuilder: (context, index) {
-                                  RulesModel rulesModel = RulesModel();
-                                  rulesModel = rulesModelList.rulesModel[index];
-                                  return Column(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 2),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.1,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                              child: _loading == true
+                                  ? Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : ListView.builder(
+                                      itemBuilder: (context, index) {
+                                        RulesModel rulesModel = RulesModel();
+                                        rulesModel =
+                                            rulesModelList.rulesModel[index];
+                                        return Column(
                                           children: [
-                                            numbers(rulesModel.id.toString()),
-                                            normalText(getName(
-                                                rulesModel.tournamentId)),
-                                            normalText(
-                                                rulesModel.name.toString()),
-                                            normalText(rulesModel.shortName
-                                                .toString()),
-                                            normalText(
-                                                rulesModel.points.toString()),
-                                            USER_TYPE == "admin"
-                                                ? Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.08,
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.close,
-                                                          color: Colors
-                                                              .red.shade700,
-                                                        ),
-                                                        IconButton(
-                                                          onPressed: () {
-                                                            rulesIndex =
-                                                                index + 1;
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            AddRules(
-                                                                              edit: "edit",
-                                                                              rulesModel: editData(),
-                                                                            )));
-                                                          },
-                                                          icon: Icon(
-                                                            Icons.mode_edit,
-                                                            color:
-                                                                Colors.orange,
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ))
-                                                : Text(""),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 12, vertical: 2),
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.1,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  numbers(
+                                                      rulesModel.id.toString()),
+                                                  normalText(getName(
+                                                      rulesModel.tournamentId)),
+                                                  normalText(rulesModel.name
+                                                      .toString()),
+                                                  normalText(rulesModel
+                                                      .shortName
+                                                      .toString()),
+                                                  normalText(rulesModel.points
+                                                      .toString()),
+                                                  USER_TYPE == "admin"
+                                                      ? Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.08,
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.close,
+                                                                color: Colors
+                                                                    .red
+                                                                    .shade700,
+                                                              ),
+                                                              IconButton(
+                                                                onPressed: () {
+                                                                  rulesIndex =
+                                                                      index + 1;
+                                                                  Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => AddRules(
+                                                                                edit: "edit",
+                                                                                rulesModel: editData(),
+                                                                              )));
+                                                                },
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .mode_edit,
+                                                                  color: Colors
+                                                                      .orange,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ))
+                                                      : Text(""),
+                                                ],
+                                              ),
+                                            ),
+                                            Divider(
+                                              thickness: 1,
+                                            )
                                           ],
-                                        ),
-                                      ),
-                                      Divider(
-                                        thickness: 1,
-                                      )
-                                    ],
-                                  );
-                                },
-                                itemCount: rulesModelList.rulesModel == null
-                                    ? 0
-                                    : rulesModelList.rulesModel.length,
-                              ),
+                                        );
+                                      },
+                                      itemCount: rulesModelList.rulesModel ==
+                                              null
+                                          ? 0
+                                          : rulesModelList.rulesModel.length,
+                                    ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(12.0),

@@ -172,6 +172,17 @@ class _AddContestState extends State<AddContest> {
     // TODO: implement initState
     super.initState();
     _loading = true;
+    if (widget.contestsModel.name != "" && widget.contestsModel.name != null) {
+      _titleController = TextEditingController(text: widget.contestsModel.name);
+      _maxEntryPerUserController = TextEditingController(
+          text: widget.contestsModel.maxEntriesPerUser.toString());
+      _maxEntriesController = TextEditingController(
+          text: "${widget.contestsModel.maxEntries.toString()}");
+      _entryAmountController = TextEditingController(
+          text: widget.contestsModel.entryAmount.toString());
+      _contestCategoryController = TextEditingController(
+          text: widget.contestsModel.contestCategory.toString());
+    }
     getMatchesData();
     getContestData();
     getTeamsData();
@@ -336,8 +347,8 @@ class _AddContestState extends State<AddContest> {
     );
   }
 
-  bool isSwitched = false;
-  int isEnabled = 0;
+  bool isSwitched = true;
+  int isEnabled = 1;
   var textValue = 'Status';
   void toggleSwitch(bool value) {
     if (isSwitched == false) {
@@ -364,31 +375,36 @@ class _AddContestState extends State<AddContest> {
   }
 
   _editContest() {
-    ContestsModel contestsModel = ContestsModel(
-        name: _titleController.text == null
-            ? widget.contestsModel.name
-            : _titleController.text,
-        contestCategory: _contestCategoryController.text == null
-            ? widget.contestsModel.contestCategory
-            : _contestCategoryController.text,
-        entryAmount: int.parse(_entryAmountController.text) == null
-            ? widget.contestsModel.entryAmount
-            : int.parse(_entryAmountController.text),
-        maxEntries: int.parse(_maxEntriesController.text) == null
-            ? widget.contestsModel.maxEntries
-            : int.parse(_maxEntriesController.text),
-        maxEntriesPerUser: int.parse(_maxEntryPerUserController.text) == null
-            ? widget.contestsModel.maxEntriesPerUser
-            : int.parse(_maxEntryPerUserController.text),
-        matchId: int.parse(_matchId) == null
-            ? widget.contestsModel.matchId
-            : int.parse(_matchId),
-        status: isEnabled == null ? widget.contestsModel.status : isEnabled,
-        id: widget.contestsModel.id);
+    if (_matchId == null) {
+      showDialog("Please select Match");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       if (int.parse(_maxEntryPerUserController.text) *
               int.parse(_maxEntriesController.text) <=
           int.parse(_entryAmountController.text)) {
+        ContestsModel contestsModel = ContestsModel(
+            name: _titleController.text == null
+                ? widget.contestsModel.name
+                : _titleController.text,
+            contestCategory: _contestCategoryController.text == null
+                ? widget.contestsModel.contestCategory
+                : _contestCategoryController.text,
+            entryAmount: int.parse(_entryAmountController.text) == null
+                ? widget.contestsModel.entryAmount
+                : int.parse(_entryAmountController.text),
+            maxEntries: int.parse(_maxEntriesController.text) == null
+                ? widget.contestsModel.maxEntries
+                : int.parse(_maxEntriesController.text),
+            maxEntriesPerUser:
+                int.parse(_maxEntryPerUserController.text) == null
+                    ? widget.contestsModel.maxEntriesPerUser
+                    : int.parse(_maxEntryPerUserController.text),
+            matchId: int.parse(_matchId) == null
+                ? widget.contestsModel.matchId
+                : int.parse(_matchId),
+            status: isEnabled == null ? widget.contestsModel.status : isEnabled,
+            id: widget.contestsModel.id);
         getPostContest.editContests(contestModelObject: contestsModel);
         return;
       } else {
@@ -401,6 +417,10 @@ class _AddContestState extends State<AddContest> {
   }
 
   _submit() {
+    if (_matchId == null) {
+      showDialog("Please select Match");
+      return;
+    }
     if (_formKey.currentState.validate()) {
       if (int.parse(_maxEntryPerUserController.text) *
               int.parse(_maxEntriesController.text) <=
@@ -420,6 +440,5 @@ class _AddContestState extends State<AddContest> {
 
   valid() {
     postContestsData();
-    showDialog("Added Successfully");
   }
 }

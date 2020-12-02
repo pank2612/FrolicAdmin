@@ -70,7 +70,11 @@ extension EmailValidator on String {
   }
 
   bool isValidTitle() {
-    return this.length > 2 && this.length < 30 ? true : false;
+    return this.length > 2 &&
+            this.length < 30 &&
+            RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(this)
+        ? true
+        : false;
   }
 
   bool isShortCode() {
