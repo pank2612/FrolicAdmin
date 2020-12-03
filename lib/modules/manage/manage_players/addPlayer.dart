@@ -320,15 +320,15 @@ class _AddPlayerState extends State<AddPlayer> {
     "Bangladesh"
   ];
   GetPostPlayers getPostPlayers = GetPostPlayers();
-  postPlayersData() async {
-    PlayersModel playersModel = PlayersModel();
-    await getPostPlayers.postPlayers(
-      playersModelObject: playersModel,
-    );
-    setState(() {
-      _loading = false;
-    });
-  }
+//  postPlayersData() async {
+//    PlayersModel playersModel = PlayersModel();
+//    await getPostPlayers.postPlayers(
+//      playersModelObject: playersModel,
+//    );
+//    setState(() {
+//      _loading = false;
+//    });
+//  }
 
   getPlayersData() async {
     await getPostPlayers.getPlayers().then((player) {
@@ -384,9 +384,9 @@ class _AddPlayerState extends State<AddPlayer> {
         country: _country,
         teamId: int.parse(_team),
         skillsId: int.parse(_skill),
-        credits: int.parse(_creditController.text),
+        credits: double.parse(_creditController.text),
         picture: imageText,
-        points: int.parse(_pointsController.text),
+        points: double.parse(_pointsController.text),
         shortName: _nickNameController.text,
         isPlaying: isEnabled,
         status: isStatus);

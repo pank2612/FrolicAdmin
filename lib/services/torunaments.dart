@@ -37,6 +37,11 @@ class GetPostTournaments {
       print(response.statusCode);
       if (response.statusCode == 200) {
         function();
+        Fluttertoast.showToast(
+          msg: "Added Successfully",
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+        );
         print("Data Added");
         var jsonData = jsonDecode(response.body);
         print("JsonData is : $jsonData");

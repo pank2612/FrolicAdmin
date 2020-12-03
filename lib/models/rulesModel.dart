@@ -31,7 +31,7 @@ class RulesModel {
   int tournamentId;
   String name;
   String shortName;
-  int points;
+  double points;
 
   factory RulesModel.fromJson(Map<String, dynamic> json) => RulesModel(
         id: json["id"],

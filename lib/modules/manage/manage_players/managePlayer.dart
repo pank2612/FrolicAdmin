@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:frolicsports/constants/config.dart';
 import 'package:frolicsports/models/playersModel.dart';
+import 'package:frolicsports/models/skillsModel.dart';
 import 'package:frolicsports/models/teamsModel.dart';
 import 'package:frolicsports/modules/manage/manage_players/addPlayer.dart';
 import 'package:frolicsports/screens/homeScreen.dart';
 import 'package:frolicsports/services/playersServices.dart';
 import 'package:firebase/firebase.dart' as fb;
+import 'package:frolicsports/services/skillsServices.dart';
 import 'package:frolicsports/services/teamsServices.dart';
 
 class ManagePlayerScreen extends StatefulWidget {
@@ -22,6 +24,7 @@ class _ManagePlayerScreenState extends State<ManagePlayerScreen> {
     _loading = true;
     getPlayersData();
     getTeamsData();
+    getSkillsData();
     //get();
   }
 
@@ -46,6 +49,16 @@ class _ManagePlayerScreenState extends State<ManagePlayerScreen> {
     });
   }
 
+  SkillsModelList skillsModelList = SkillsModelList();
+  GetPostSkills getSkills = GetPostSkills();
+  getSkillsData() async {
+    skillsModelList = await getSkills.getSkills();
+    //getTournamentData();
+    setState(() {
+      _loading = false;
+    });
+  }
+
   String getName(
     int Id,
   ) {
@@ -57,6 +70,19 @@ class _ManagePlayerScreenState extends State<ManagePlayerScreen> {
       }
     });
     return teamName;
+  }
+
+  String getSkillName(
+    int Id,
+  ) {
+    String skillName = "";
+    skillsModelList.skillsModel.forEach((skills) {
+      if (skills.id == Id) {
+        //matchName = match.name;
+        skillName = skills.name;
+      }
+    });
+    return skillName;
   }
 
   List teamName;
@@ -181,7 +207,7 @@ class _ManagePlayerScreenState extends State<ManagePlayerScreen> {
                                   numbers("#"),
                                   normalText("Team"),
                                   normalText("Name"),
-                                  normalText("Status"),
+                                  //  normalText("Status"),
                                   normalText("Nick Name"),
                                   normalText("Skill"),
                                   normalText("Credits"),
@@ -228,15 +254,14 @@ class _ManagePlayerScreenState extends State<ManagePlayerScreen> {
                                                             .teamId)),
                                                     normalText(playersModel.name
                                                         .toString()),
-                                                    normalText(playersModel
-                                                        .status
-                                                        .toString()),
+//                                                    normalText(playersModel
+//                                                        .status
+//                                                        .toString()),
                                                     normalText(playersModel
                                                         .shortName
                                                         .toString()),
-                                                    normalText(playersModel
-                                                        .skillsId
-                                                        .toString()),
+                                                    normalText(getSkillName(
+                                                        playersModel.skillsId)),
                                                     normalText(playersModel
                                                         .credits
                                                         .toString()),

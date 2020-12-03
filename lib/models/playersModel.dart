@@ -40,8 +40,8 @@ class PlayersModel {
   String picture;
   String shortName;
   int skillsId;
-  int credits;
-  int points;
+  double credits;
+  double points;
   int status;
   String country;
   int isPlaying;

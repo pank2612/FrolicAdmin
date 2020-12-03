@@ -37,6 +37,7 @@ class GetPostPlayers {
       print(response.statusCode);
       if (response.statusCode == 200) {
         function();
+
         print("Data Added");
         var jsonData = jsonDecode(response.body);
         print("JsonData is : $jsonData");

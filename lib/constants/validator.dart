@@ -56,9 +56,9 @@ extension EmailValidator on String {
   }
 
   bool isValidCredits() {
-    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
-        ? true
-        : false;
+    return
+        //RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) &&
+        this.length < 5 ? true : false;
   }
 
   bool isValidName() {
@@ -69,10 +69,16 @@ extension EmailValidator on String {
         : false;
   }
 
+  bool isValidVenues() {
+    return
+        // RegExp(r'^[a-zA-Z ]+$').hasMatch(this) &&
+        this.length > 2 && this.length < 80 ? true : false;
+  }
+
   bool isValidTitle() {
     return this.length > 2 &&
             this.length < 30 &&
-            RegExp(r'^[a-zA-Z0-9 ]+$').hasMatch(this)
+            RegExp(r'^[a-zA-Z0-9 ][a-zA-Z0-9_.-]+[a-zA-Z0-9]$').hasMatch(this)
         ? true
         : false;
   }
@@ -80,7 +86,7 @@ extension EmailValidator on String {
   bool isShortCode() {
     return RegExp(r'^[A-Z]+$').hasMatch(this) &&
             //this.length > 2 &&
-            this.length < 4
+            this.length < 5
         ? true
         : false;
   }
@@ -94,14 +100,13 @@ extension EmailValidator on String {
   }
 
   bool isMaxPoints() {
-    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
-        ? true
-        : false;
+    return
+        //RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) &&
+        this.length < 5 ? true : false;
   }
 
   bool isMinPlayers() {
-    return RegExp(r'(^(?:[+0]9)?[0-9]{1}$)').hasMatch(this)
-        //&& this.length < 2
+    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
         ? true
         : false;
   }
@@ -117,7 +122,9 @@ extension EmailValidator on String {
   }
 
   bool isMaxPlayerSingleTeam() {
-    return RegExp(r'(^(?:[+0]9)?[0-9]{1}$)').hasMatch(this);
+    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
+        ? true
+        : false;
   }
 
 //  bool isValidTitle() {
@@ -125,11 +132,9 @@ extension EmailValidator on String {
 //  }
 
   bool isValidDescription() {
-    return RegExp(r'^[a-zA-Z ]+$').hasMatch(this) &&
-            this.length > 2 &&
-            this.length < 250
-        ? true
-        : false;
+    return
+        //RegExp(r'^[a-zA-Z ]+$').hasMatch(this) &&
+        this.length > 2 && this.length < 250 ? true : false;
   }
 
 //  bool isValidDeadline() {

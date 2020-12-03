@@ -140,7 +140,7 @@ class _AddRulesState extends State<AddRules> {
         name: _nameController.text,
         shortName: _shortCodeController.text,
         tournamentId: int.parse(_tourName),
-        points: int.parse(_pointsController.text));
+        points: double.parse(_pointsController.text));
     getPostRules.postRules(
       rulesModelObject: rulesModel,
     );

@@ -728,11 +728,6 @@ class _AddTournamentState extends State<AddTournament> {
 
   valid() {
     postTournamentData();
-    Fluttertoast.showToast(
-      msg: "Added Successfully",
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 2,
-    );
   }
 
   void showDialog(String name) {

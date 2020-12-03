@@ -99,10 +99,10 @@ String validateInput(String inputValue, ValidationKey key) {
     case ValidationKey.maxSingleTeam:
       return inputValue.isMaxPlayerSingleTeam()
           ? null
-          : "Max players from single team must be 9";
+          : "Max players from single can't be Zero";
       break;
     case ValidationKey.venue:
-      return inputValue.isValidName() ? null : "Venue can't be empty";
+      return inputValue.isValidVenues() ? null : "Venue can't be empty";
       break;
     case ValidationKey.entryAmount:
       return inputValue.isEntryAmount() ? null : "Entry Amount can't be Zero";
@@ -127,7 +127,7 @@ String validateInput(String inputValue, ValidationKey key) {
     case ValidationKey.shortCode:
       return inputValue.isShortCode()
           ? null
-          : " Short Code must be uppercase and less than 4 digits";
+          : " Short Code must be uppercase and less than 5 digits";
       break;
     case ValidationKey.image:
       return inputValue.isImage()

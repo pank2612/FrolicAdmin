@@ -557,8 +557,10 @@ class _AddPrizeState extends State<AddPrize> {
           return;
         }
       }
-      if (tempPrizeAmount + submittedAmount >
-          widget.contestsModel.entryAmount * widget.contestsModel.maxEntries) {
+
+      if (tempPrizeAmount + submittedAmount > widget.contestsModel.entryAmount
+          //* widget.contestsModel.maxEntries
+          ) {
         showDialog("max amount threshold exceeds");
         return;
       }
@@ -580,13 +582,6 @@ class _AddPrizeState extends State<AddPrize> {
     int endRange = int.parse(_rankRangeEndController.text);
     int prizeAmount = int.parse(_amountController.text);
     if (_formKey.currentState.validate()) {
-//      widget.prizeModel.forEach((prize) {
-//        if (widget.prizeModelObject.id == prize.id) {
-//          showDialog("Same id");
-//          return;
-//        }
-//      });
-
       if (startRange == 0 || endRange == 0) {
         showDialog("Start and End rank range can't be Zero");
         return;
@@ -622,8 +617,9 @@ class _AddPrizeState extends State<AddPrize> {
           return;
         }
       }
-      if (tempPrizeAmount + submittedAmount >
-          widget.contestsModel.entryAmount * widget.contestsModel.maxEntries) {
+      if (tempPrizeAmount + submittedAmount > widget.contestsModel.entryAmount
+          //  * widget.contestsModel.maxEntries
+          ) {
         showDialog("max amount threshold exceeds");
         return;
       }
