@@ -65,6 +65,16 @@ String validateInput(String inputValue, ValidationKey key) {
           ? null
           : "Points must be less than 3 digits";
       break;
+    case ValidationKey.maxOverPerBowler:
+      return inputValue.isMaxOverPerBowler()
+          ? null
+          : "Over must be less than 3 digits";
+      break;
+    case ValidationKey.inningsOver:
+      return inputValue.isInningsOver()
+          ? null
+          : "Inning over must be less than 3 digits";
+      break;
     case ValidationKey.minPlayers:
       return inputValue.isMinPlayers()
           ? null
@@ -149,6 +159,8 @@ enum ValidationKey {
   title,
   Description,
   maxPoints,
+  maxOverPerBowler,
+  inningsOver,
   players,
   venue,
   number,

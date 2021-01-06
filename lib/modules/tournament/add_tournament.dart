@@ -29,6 +29,8 @@ class _AddTournamentState extends State<AddTournament> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _maxPointsController = TextEditingController();
+  TextEditingController _maxOverPerBowlerController = TextEditingController();
+  TextEditingController _inningsOverController = TextEditingController();
   TextEditingController _playersController = TextEditingController();
   TextEditingController _maxSingleTeamController = TextEditingController();
   TextEditingController _deadlineSecondsController = TextEditingController();
@@ -349,14 +351,16 @@ class _AddTournamentState extends State<AddTournament> {
   }
 
   GetPostTournaments getPostTournaments = GetPostTournaments();
-  postTournamentData() {
+  postTournamentData() async {
     TournamentModel tournamentModel = TournamentModel(
         description: _descriptionController.text,
         deadlineSeconds: int.parse(_deadlineSecondsController.text),
         enabled: isEnabled,
+        maxOverPerBowler: int.parse(_maxOverPerBowlerController.text),
+        inningsOver: int.parse(_inningsOverController.text),
         name: _titleController.text,
         startDate: startDateAndTime,
-        endDate: endDateAndTime,
+        //  endDate: endDateAndTime,
         maxPlayers: int.parse(_playersController.text),
         logo: imageText,
         maxPoints: int.parse(_maxPointsController.text),
@@ -365,9 +369,11 @@ class _AddTournamentState extends State<AddTournament> {
         teamFolderName: "tournament/ronnie.png",
         country: _selectCountry,
         sportsId: int.parse(_category));
-    getPostTournaments.postTournaments(
-        tournamentModelObject: tournamentModel,
-        function: uploadImageToFirebaseStorage());
+
+    await getPostTournaments.postTournaments(
+      tournamentModelObject: tournamentModel,
+    );
+    uploadImageToFirebaseStorage();
   }
 
   List<SportsModel> _sportsList;
@@ -396,9 +402,13 @@ class _AddTournamentState extends State<AddTournament> {
           text: widget.tournamentModel.startDate.toString());
       _endDateController = TextEditingController(
           text: widget.tournamentModel.endDate.toString());
+      _maxOverPerBowlerController = TextEditingController(
+          text: widget.tournamentModel.maxOverPerBowler.toString());
+      _inningsOverController = TextEditingController(
+          text: widget.tournamentModel.inningsOver.toString());
     }
     GetSports getSports = GetSports();
-    print("TOUR DATA ${widget.tournamentModel.name}");
+//    print("TOUR DATA ${widget.tournamentModel.name}");
     getSports.getSports1().then((sports) {
       setState(() {
         _sportsList = sports.sportsModel;
@@ -529,6 +539,28 @@ class _AddTournamentState extends State<AddTournament> {
                       ],
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textFieldWithText(
+                            "Innings Overs",
+                            _inningsOverController,
+                            ValidationKey.inningsOver,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.inningsOver.toString()
+                                : ""),
+                        textFieldWithText(
+                            "Max over per bowler",
+                            _maxOverPerBowlerController,
+                            ValidationKey.maxOverPerBowler,
+                            TextInputType.number,
+                            widget.edit == "edit"
+                                ? widget.tournamentModel.maxOverPerBowler
+                                    .toString()
+                                : "")
+                      ],
+                    ),
+                    Row(
                       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         dropDownCountry(
@@ -636,6 +668,12 @@ class _AddTournamentState extends State<AddTournament> {
           maxPlayers: int.parse(_playersController.text) == null
               ? widget.tournamentModel.maxPlayers
               : int.parse(_playersController.text),
+          inningsOver: int.parse(_inningsOverController.text) == null
+              ? widget.tournamentModel.inningsOver
+              : int.parse(_inningsOverController.text),
+          maxOverPerBowler: int.parse(_maxOverPerBowlerController.text) == null
+              ? widget.tournamentModel.maxOverPerBowler
+              : int.parse(_maxOverPerBowlerController.text),
           logo: imageText == null ? widget.tournamentModel.logo : imageText,
           maxPoints: int.parse(_maxPointsController.text) == null
               ? widget.tournamentModel.maxPoints
@@ -686,8 +724,6 @@ class _AddTournamentState extends State<AddTournament> {
     uploadImage(onSelected: (file) {
       _file = file;
       imageText = file.name.toString();
-
-      // print("data is ${imageText.toString()}");
     });
   }
 
@@ -705,10 +741,10 @@ class _AddTournamentState extends State<AddTournament> {
       showDialog("Please select Start Date");
       return;
     }
-    if (endDateAndTime == null) {
-      showDialog("Please select End Date");
-      return;
-    }
+//    if (endDateAndTime == null) {
+//      showDialog("Please select End Date");
+//      return;
+//    }
     if (_selectCountry == null) {
       showDialog("Please select Country");
       return;

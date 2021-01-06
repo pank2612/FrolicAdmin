@@ -147,7 +147,9 @@ class _TournamentScreenState extends State<TournamentScreen> {
                                   normalText("LOGO"),
                                   normalText("Max Point"),
                                   normalText("Max Player"),
-                                  normalText("Max Players In Single Team"),
+                                  normalText("MaxOverPerBowler"),
+                                  normalText("InningsOver"),
+                                  normalText("MaxPlayersInSingleTeam"),
                                   normalText("Deadlines"),
                                   normalText("Country"),
                                   normalText("Action")
@@ -291,6 +293,14 @@ class _TournamentScreenState extends State<TournamentScreen> {
                                                           .toString() ??
                                                       " "),
                                                   normalText(tournamentModel
+                                                          .maxOverPerBowler
+                                                          .toString() ??
+                                                      " "),
+                                                  normalText(tournamentModel
+                                                          .inningsOver
+                                                          .toString() ??
+                                                      " "),
+                                                  normalText(tournamentModel
                                                           .maxSingleTeam
                                                           .toString() ??
                                                       " "),
@@ -308,7 +318,7 @@ class _TournamentScreenState extends State<TournamentScreen> {
                                                                       context)
                                                                   .size
                                                                   .width *
-                                                              0.08,
+                                                              0.06,
                                                           child: Row(
                                                             children: [
                                                               Icon(
@@ -449,7 +459,7 @@ class _TournamentScreenState extends State<TournamentScreen> {
 
   Widget normalText(String name) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.08,
+      width: MediaQuery.of(context).size.width * 0.06,
       child: Text(
         name,
         style: TextStyle(

@@ -117,6 +117,18 @@ extension EmailValidator on String {
         : false;
   }
 
+  bool isMaxOverPerBowler() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
+        ? true
+        : false;
+  }
+
+  bool isInningsOver() {
+    return RegExp(r'(^(?:[+0]9)?[0-9]+$)').hasMatch(this) && this.length < 3
+        ? true
+        : false;
+  }
+
   bool isValidMobile() {
     return RegExp(r'(^(?:[+0]9)?[0-9]{2}$)').hasMatch(this);
   }

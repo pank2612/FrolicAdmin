@@ -39,6 +39,8 @@ class TournamentModel {
     this.maxSingleTeam,
     this.deadlineSeconds,
     this.teamFolderName,
+    this.maxOverPerBowler,
+    this.inningsOver,
     this.playerFolderName,
   });
 
@@ -48,6 +50,8 @@ class TournamentModel {
   String description;
   DateTime startDate;
   DateTime endDate;
+  int maxOverPerBowler;
+  int inningsOver;
   String logo;
   int maxPoints;
   int maxPlayers;
@@ -73,6 +77,8 @@ class TournamentModel {
         maxPoints: json["maxPoints"],
         maxPlayers: json["maxPlayers"],
         country: json["country"],
+        inningsOver: json['inningsOver'],
+        maxOverPerBowler: json['maxOverPerBowler'],
         enabled: json["enabled"],
         maxSingleTeam: json["maxSingleTeam"],
         deadlineSeconds: json["deadlineSeconds"],
@@ -94,6 +100,8 @@ class TournamentModel {
         "logo": logo,
         "maxPoints": maxPoints,
         "maxPlayers": maxPlayers,
+        "maxOverPerBowler": maxOverPerBowler,
+        "inningsOver": inningsOver,
         "country": country,
         "enabled": enabled,
         "maxSingleTeam": maxSingleTeam,

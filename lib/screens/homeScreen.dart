@@ -97,115 +97,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Image image;
-  Future<Uri> downloadUrl() {
-    return fb
-        .storage()
-        .refFromURL('gs://frolicsports-39c94.appspot.com')
-        .child("FrolicSports/ronnie.jpg")
-        .getDownloadURL();
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-
-    super.initState();
-//    GetPostTournaments get = GetPostTournaments();
-//    get.getTournaments();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: _drawer(),
       appBar: AppBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: Container(
-              height: 200,
-              width: 200,
-              child: image == null
-                  ? Text(
-                      "No Image",
-                      style: TextStyle(fontSize: 50),
-                    )
-                  : image,
-            ),
-          )
-//          BasicDateTimeField(),
-//          BasicDateTimeField(),
-//          BasicDateField(),
-//          BasicTimeField(),
-//          Container(
-//            width: 200,
-//            height: 200,
-//            child: FutureBuilder(
-//              future: downloadUrl(),
-//              builder: (context, snapShot) {
-//                if (snapShot.connectionState == ConnectionState.waiting) {
-//                  return Container(
-//                      alignment: Alignment.centerLeft,
-//                      width: 120,
-//                      height: 120,
-//                      child: CircleAvatar(child: CircularProgressIndicator()));
-//                } else if (!snapShot.hasData) {
-//                  return Container(
-//                    alignment: Alignment.centerLeft,
-//                    width: 120,
-//                    height: 120,
-//                    child: CircleAvatar(
-//                      backgroundColor: Colors.red,
-//                      child: Image.network(snapShot.data.toString()),
-//                    ),
-//                  );
-//                } else if (snapShot.hasData) {
-//                  return Container(
-//                    alignment: Alignment.centerLeft,
-//                    width: 120,
-//                    height: 120,
-//                    child: CircleAvatar(
-//                      child: Image.network(snapShot.data.toString()),
-//                    ),
-//                  );
-//                }
-//                return null;
-//              },
-//            ),
-//            //       child: Center(child: image != null ? image : Text('No data...')),
-////        child: StreamBuilder(
-////          stream: Firestore.instance.collection("users").snapshots(),
-////          builder: (context, snapShot) {
-////            if (snapShot.hasError) {
-////              return Text("error");
-////            } else if (snapShot.data == null) {
-////              return Text("No Data");
-////            } else {
-////              return ListView.builder(
-////                itemCount: 2,
-////                itemBuilder: (context, index) {
-////                  return Text(
-////                      snapShot.data.documents[index]["name"].toString());
-////                },
-////              );
-////            }
-////          },
-////        ),
-//          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.open_in_browser),
-        onPressed: () async {
-          final _image = await FlutterWebImagePicker.getImage;
-          setState(() {
-            image = _image;
-          });
-        },
-      ),
     );
   }
 }

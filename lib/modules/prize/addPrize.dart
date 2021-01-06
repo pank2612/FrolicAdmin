@@ -768,7 +768,6 @@ class _AddPrizeState extends State<AddPrize> {
 
     contestsModelList.contestsModel.forEach((contest) {
       if (contest.id == Id) {
-        //matchName = match.name;
         contestName = contest.name;
       }
     });

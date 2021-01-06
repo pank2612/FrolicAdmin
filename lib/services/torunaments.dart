@@ -17,17 +17,14 @@ class GetPostTournaments {
         print("JsonData is $jsonData}");
         final TournamentModelList tounamentModel =
             TournamentModelList.fromJson({"tournamentModel": jsonData});
-        //print("Data is${tounamentModel.tournamentModel[1].name}");
         return tounamentModel;
       }
-      // throw "Something went wrong ${response.statusCode}";
     } catch (e) {
       print("Error is ${e.toString()}");
     }
   }
 
-  postTournaments(
-      {TournamentModel tournamentModelObject, Function function}) async {
+  postTournaments({TournamentModel tournamentModelObject}) async {
     var encodedData = jsonEncode(tournamentModelObject.toJson());
     print("encoded Data $encodedData");
     try {
@@ -36,7 +33,6 @@ class GetPostTournaments {
           body: encodedData);
       print(response.statusCode);
       if (response.statusCode == 200) {
-        function();
         Fluttertoast.showToast(
           msg: "Added Successfully",
           gravity: ToastGravity.CENTER,
@@ -45,8 +41,13 @@ class GetPostTournaments {
         print("Data Added");
         var jsonData = jsonDecode(response.body);
         print("JsonData is : $jsonData");
+      } else {
+        Fluttertoast.showToast(
+          msg: "Not Added",
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+        );
       }
-      // throw "Something went wrong ${response.statusCode.toString()}";
     } catch (e) {
       print("Error is ${e.toString()}");
     }
